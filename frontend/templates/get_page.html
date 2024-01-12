@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block content %}
+<head><link rel="stylesheet" type="text/css" href="{{ style }}" ></head>
+<form class="get_form" method="post">
+    <p>Введите ваш код:</p>
+    <input name="code">
+    <button type="submit" class="btn btn-primary">Скачать</button>
+</form>
+{% endblock %}
