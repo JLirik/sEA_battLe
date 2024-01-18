@@ -1,0 +1,19 @@
+.board {
+    margin: 100px;
+}
+
+.btn-random {
+    width: 75px;
+    height: 75px;
+}
+.center-w {
+    width: 75px;
+    height: 75px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.center-h {
+
+}
