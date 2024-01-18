@@ -15,9 +15,9 @@ def first():
 
 @app.route('/', methods=['POST'])
 def upload_file():
-    print(1)
     torrent_id = request.form["kek"]
     print(torrent_id)
+    return render_template('first_page.html')
 
 
 
