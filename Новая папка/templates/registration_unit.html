@@ -1,0 +1,39 @@
+<html>
+	<head>
+		<title>Registration</title>
+		<link rel="stylesheet" type="text/css" href="../static/css/css_for_reg.css">
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Varela Round">
+	</head>
+	<body>
+		<h1>Registration</h1>
+		<div class="box-1">
+			<form id='form' method="post">
+				<div class='tab'>
+					<p>Please, enter your name and surname:</p>
+					<p><input placeholder="Your name" name="name"></p>
+					<p><input placeholder="Your surname" name="surname"></p>
+				</div>
+				<div class='tab'>
+					<p>Please, enter your contact info:</p>
+					<p><input placeholder="Your email" name="email"></p>
+					<p><input placeholder="Your phone number" name="phone"></p>
+				</div>
+				<div class='tab'>
+					<p>Please, enter your login and password:</p>
+					<p><input placeholder="Your login" name="login"></p>
+					<p><input placeholder="Your password" name="password"></p>
+				</div>
+				<div style='overflow: auto;'>
+					<button id='next' type='button' onclick="moveTab(1)">Next step</button>
+					<button id='prev' type='button' onclick="moveTab(-1)">Previous step</button>
+				</div>
+				<div>
+					<span class="step active"></span>
+					<span class="step"></span>
+					<span class="step"></span>
+				</div>
+			</form>
+		</div>
+		<script src="{{url_for('static', filename='script.js')}}"></script>
+	</body>
+</html>
