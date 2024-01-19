@@ -1,0 +1,75 @@
+body {
+	background-color: #99CCCC;
+	font-family: Varela Round;
+	text-align: center
+}
+
+.tab {
+	display: none;
+}
+
+.box-1 {
+  width: 60%;
+  background-color: #99CCCC;
+  font-size: 25px;
+  padding: 10%;
+  padding-top: 0px;
+  border: 10px solid black;
+  margin:0px auto;
+  margin-top: 5%;
+  vertical-align: middle; 
+  text-align: center;
+  padding-bottom: 10px;
+}
+
+input {
+	width: 100%;
+	padding: 2%;
+	font-family: Varela Round;
+	border: 1px;
+	opacity: 1;
+}
+
+input.invalid {
+	background-color: red;
+	opacity: 0.35;
+}
+
+button {
+	background-color: green;
+	float: right;
+	border: none;
+	font-family: Varela Round;
+	font-size: 17px;
+	color: white;
+	padding: 10px 20px;
+}
+
+button:hover {
+  opacity: 0.5;
+}
+
+#prev {
+	display: none;
+	float: left;
+}
+
+.step {
+	background-color: grey;
+	opacity: 0.5;
+	width: 15px;
+	height: 15px;
+	display: inline-block;
+	border-radius: 100%;
+	margin-top: 15px;
+}
+
+.step.finish {
+	background-color: green;
+}
+
+.step.active {
+	background-color: white;
+}
+
+
