@@ -12,6 +12,15 @@ def first():
     return render_template('first_page.html', style=url_for('static', filename='css/css_for_reg.css'))
 
 
+@app.route('/', methods=['POST'])
+def first_post():
+    button_pressed = request.form["but"]
+    if button_pressed == 'Регистрация':
+        return redirect('/reg')
+    else:
+        pass
+
+
 @app.route('/reg', methods=['GET'])
 def reg():
     return render_template('registration_unit.html')
