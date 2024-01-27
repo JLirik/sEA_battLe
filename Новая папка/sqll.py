@@ -9,6 +9,7 @@ def init_database():
                    login TEXT UNIQUE,
                    password TEXT,
                    mail TEXT UNIQUE,
+                   name TEXT,
                    is_admin INTEGER DEFAULT 0,
                    avaliable_fields TEXT DEFAULT '');
                 """)
@@ -21,13 +22,16 @@ def init_database():
     return True
 
 
-def add_user(login, password, mail, is_admin):
+def add_user(login, password, mail, name, is_admin):
     con = sqlite3.connect('predprof.db')
     cur = con.cursor()
-    cur.execute("""INSERT INTO accounts (login, password, mail, is_admin) 
-                       VALUES (?, ?, ?, ?)
-                    """, (login, password, mail, is_admin))
-    con.commit()
+    try:
+        cur.execute("""INSERT INTO users (login, password, mail, name, is_admin) 
+                           VALUES (?, ?, ?, ?, ?)
+                        """, (login, password, mail, name, is_admin,))
+        con.commit()
+    except sqlite3.IntegrityError:
+        return False
     return True
 
 
