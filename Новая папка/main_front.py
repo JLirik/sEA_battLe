@@ -26,6 +26,21 @@ def reg():
     return render_template('registration_unit.html')
 
 
+@app.route('/reg', methods=['POST'])
+def reg_post():
+    is_admin = 1 if request.form['admin'] == 'AdmCd.exe' else 0
+    sql_ret = add_user(request.form['login'], request.form['password'],
+                       request.form['email'], f"{request.form['name']} {request.form['surname']}",
+                       is_admin)
+    if sql_ret:
+        if is_admin:
+            return redirect('/admin/main')
+        else:
+            return redirect('/user/main')
+    else:
+        return render_template('registration_unit.html')
+
+
 @app.route('/admin/main', methods=['GET'])
 def admin_main():
     return render_template('admin_main.html', style=url_for('static', filename='css/css_for_reg.css'))
@@ -48,4 +63,4 @@ def user_main():
 
 
 if __name__ == '__main__':
-    app.run(port=8080, host='127.0.0.1')
+    app.run(port=1024, host='127.0.0.1')
