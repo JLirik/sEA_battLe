@@ -32,11 +32,16 @@ function moveTab(n){
 	showTab()
 }
 function validateForm(){
-	var tab, input, valid = true;
+	var tab, input, valid = true, a;
 	tab = document.getElementsByClassName('tab');
 	input = tab[curTab].getElementsByTagName('input');
 	for(i=0; i<input.length; i++){
-		if (input[i].value == ''){
+		if (input[i].value == '' && input[i].name != 'admin'){
+			valid = false;
+			input[i].className += ' invalid';
+		}
+		else if (input[i].name == 'email' && (input[i].value.indexOf('@') == -1 || input[i].value.indexOf('.') == -1)){
+		    alert('Бро, почта написана неправильно, кажись @ или . забыл :)')
 			valid = false;
 			input[i].className += ' invalid';
 		}
