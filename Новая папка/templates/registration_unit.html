@@ -9,19 +9,19 @@
 		<div class="box-1">
 			<form id='form' method="post">
 				<div class='tab'>
-					<p>Please, enter your name and surname:</p>
-					<p><input placeholder="Your name" name="name"></p>
-					<p><input placeholder="Your surname" name="surname"></p>
+					<p>Пожалуйста, введите ваше имя и фамилию:</p>
+					<p><input placeholder="Ваше имя" name="name" class="name"></p>
+					<p><input placeholder="Ваша фамилия" name="surname" class="surname"></p>
 				</div>
 				<div class='tab'>
-					<p>Please, enter your contact info:</p>
-					<p><input placeholder="Your email" name="email"></p>
-					<p><input placeholder="Your phone number" name="phone"></p>
+					<p>Пожалуйста, введите вашу контактную информацию и код администратора (только для админов):</p>
+					<p><input placeholder="Ваша почта" name="email" type="email"></p>
+					<p><input placeholder="Код админа" name="admin"></p>
 				</div>
 				<div class='tab'>
-					<p>Please, enter your login and password:</p>
-					<p><input placeholder="Your login" name="login"></p>
-					<p><input placeholder="Your password" name="password"></p>
+					<p>Пожалуйста, придумайте логин и пароль:</p>
+					<p><input placeholder="Ваш логин" name="login"></p>
+					<p><input placeholder="Придумайте пароль" name="password" type="password"></p>
 				</div>
 				<div style='overflow: auto;'>
 					<button id='next' type='button' onclick="moveTab(1)">Next step</button>
