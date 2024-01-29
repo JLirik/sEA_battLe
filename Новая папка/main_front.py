@@ -67,5 +67,12 @@ def user_main():
     return render_template('user_main.html', style=url_for('static', filename='css/css_for_reg.css'))
 
 
+@app.route('/user/maps', methods=['GET'])
+def usr_maps():
+    maps_lst = [(1, '1 карта', 6), (2, "2 карта", 3)]  # Потом будет получать из БД.
+    # Формат: Номер карты(value), Название карты, Колличесво выстрелов
+    return render_template('user_maps.html', data=maps_lst, style=url_for('static', filename='css/css_for_reg.css'))
+
+
 if __name__ == '__main__':
     app.run(port=1024, host='127.0.0.1')
