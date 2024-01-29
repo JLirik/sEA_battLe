@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+	<head><link rel="stylesheet" type="text/css" href="{{ style }}" ></head>
+<h1>Ваши карты</h1>
+<div style="width: 30%; display: flex; justify-content: center;">
+    <input placeholder="Карта" style="height: 45px; margin: 0px 10px;" name="login">
+    <button class="button" style="width:135px;height:45px;">Найти</button>
+</div>
+
+<div class="box-1">
+
+    {% for i in data %}
+
+    <div style="display: flex; justify-content: space-between; border-bottom: 1px solid black;">
+        <div>
+            <h2>{{ i[1] }}</h2>
+            <h5>Попыток: {{ i[2] }}</h5>
+        </div>
+        <div style="display: flex; align-items: flex-end; margin: 0px;">
+            <form action="/">
+                <button name="map" type="submit" value="{{ i[0] }}" class="button" style="width:135px;height:45px;">Перейти</button>
+            </form>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+
+{% endblock %}
