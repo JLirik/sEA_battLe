@@ -63,3 +63,8 @@ def add_user_to_field(login, field_id):
                         """, (users, field_id,))
     con.commit()
     return True
+def get_fields():
+    con = sqlite3.connect('predprof.db')
+    cur = con.cursor()
+    fields = cur.execute("""SELECT * FROM fields""").fetchall()
+    return fields
