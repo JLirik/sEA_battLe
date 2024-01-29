@@ -1,4 +1,4 @@
-from flask import Flask, url_for, request, render_template, send_from_directory, send_file, redirect
+from flask import Flask, url_for, request, render_template, redirect, flash
 from sqll import *
 
 
@@ -32,12 +32,17 @@ def reg_post():
     sql_ret = add_user(request.form['login'], request.form['password'],
                        request.form['email'], f"{request.form['name']} {request.form['surname']}",
                        is_admin)
-    if sql_ret:
+    if sql_ret == 0:
         if is_admin:
             return redirect('/admin/main')
         else:
             return redirect('/user/main')
     else:
+        if sql_ret == 'users.mail':
+            msg = 'ая почта'
+        else:
+            msg = 'ый логин'
+        flash(f'Указанн{msg} уже существует')
         return render_template('registration_unit.html')
 
 
