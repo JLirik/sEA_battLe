@@ -6,6 +6,15 @@
 	</head>
 	<body>
 		<h1>Registration</h1>
+		{% with messages = get_flashed_messages() %}
+		 {% if messages %}
+		  <ul class="ul_cl">
+		  {% for message in messages %}
+			<li>{{ message }}</li>
+		  {% endfor %}
+		  </ul>
+		 {% endif %}
+		{% endwith %}
 		<div class="box-1">
 			<form id='form' method="post">
 				<div class='tab'>
