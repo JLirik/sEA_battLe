@@ -30,9 +30,9 @@ def add_user(login, password, mail, name, is_admin):
                            VALUES (?, ?, ?, ?, ?)
                         """, (login, password, mail, name, is_admin,))
         con.commit()
-    except sqlite3.IntegrityError:
-        return False
-    return True
+    except Exception as e:
+        return str(e)[26:]
+    return 0
 
 
 def add_field(field):
@@ -63,3 +63,10 @@ def add_user_to_field(login, field_id):
                         """, (users, field_id,))
     con.commit()
     return True
+
+
+def get_fields():
+    con = sqlite3.connect('predprof.db')
+    cur = con.cursor()
+    fields = cur.execute("""SELECT * FROM fields""").fetchall()
+    return fields
