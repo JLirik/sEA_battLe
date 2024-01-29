@@ -1,12 +1,12 @@
 <html>
 	<head>
-		<title>Registration</title>
+		<title>Регистрация</title>
 		<link rel="stylesheet" type="text/css" href="../static/css/css_for_reg.css">
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Varela Round">
 	</head>
 	<body>
-		<h1>Registration</h1>
-		<div class="box-1">
+		<h1>Регистрация</h1>
+			<div class="box-1">
 			<form id='form' method="post">
 				<div class='tab'>
 					<p>Пожалуйста, введите ваше имя и фамилию:</p>
@@ -14,7 +14,7 @@
 					<p><input placeholder="Ваша фамилия" name="surname" class="surname"></p>
 				</div>
 				<div class='tab'>
-					<p>Пожалуйста, введите вашу контактную информацию и код администратора (только для админов):</p>
+					<p>Пожалуйста, введите вашу почту и код администратора (только для админов):</p>
 					<p><input placeholder="Ваша почта" name="email" type="email"></p>
 					<p><input placeholder="Код админа" name="admin"></p>
 				</div>
@@ -24,8 +24,10 @@
 					<p><input placeholder="Придумайте пароль" name="password" type="password"></p>
 				</div>
 				<div style='overflow: auto;'>
-					<button id='next' type='button' onclick="moveTab(1)">Next step</button>
-					<button id='prev' type='button' onclick="moveTab(-1)">Previous step</button>
+				  <form action="/">
+					<button id='next' type='button' onclick="moveTab(1)">Закончить</button>
+				  </form>
+					<button id='prev' type='button' onclick="moveTab(-1)">Предыдущий шаг</button>
 				</div>
 				<div>
 					<span class="step active"></span>
