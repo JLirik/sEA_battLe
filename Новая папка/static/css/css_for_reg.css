@@ -8,6 +8,13 @@ body {
 	display: none;
 }
 
+.ul_cl {
+    color: #FF0000;
+    font-size: 25px;
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
 .box-1 {
   width: 60%;
   background-color: #99CCCC;
