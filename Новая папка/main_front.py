@@ -43,7 +43,7 @@ def reg_post():
 
 @app.route('/admin/main', methods=['GET'])
 def admin_main():
-    return render_template('admin_main.html', style=url_for('static', filename='css/css_for_reg.css'))
+    return render_template('admin_main.html', style=url_for('static', filename='css/css_for_reg.css'), variable = len(get_fields()))
 
 
 @app.route('/admin/create_field', methods=['GET', 'POST'])
