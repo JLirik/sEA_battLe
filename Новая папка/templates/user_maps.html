@@ -18,9 +18,10 @@
             <h5>Попыток: {{ i[2] }}</h5>
         </div>
         <div style="display: flex; align-items: flex-end; margin: 0px;">
-            <form action="/maps/{{ i[1] }}">
+            <form action="/user/maps" method="post">
                 <button name="map" type="submit" value="{{ i[0] }}" class="button" style="width:135px;height:45px;">Перейти</button>
             </form>
+
         </div>
     </div>
     {% endfor %}
