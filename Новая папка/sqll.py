@@ -38,6 +38,25 @@ def add_user(login, password, mail, name, is_admin):
     return 0
 
 
+def log_in(login, passw):
+    con = sqlite3.connect('predprof.db')
+    cur = con.cursor()
+    try:
+        pwd = cur.execute("""SELECT password FROM users WHERE login=?""", (login,)).fetchone()[0]
+    except TypeError:
+        return False
+    if passw == pwd:
+        return True
+    return False
+
+
+def adm_chck(login):
+    con = sqlite3.connect('predprof.db')
+    cur = con.cursor()
+    adm = cur.execute("""SELECT is_admin FROM users WHERE login=?""", (login,)).fetchone()[0]
+    return adm
+
+
 def add_field(field, prizes, name):
     con = sqlite3.connect('predprof.db')
     cur = con.cursor()
