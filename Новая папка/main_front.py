@@ -12,13 +12,13 @@ def first():
     return render_template('first_page.html', style=url_for('static', filename='css/css_for_reg.css'))
 
 
-@app.route('/', methods=['POST'])
-def first_post():
-    button_pressed = request.form["but"]
-    if button_pressed == 'Регистрация':
-        return redirect('/reg')
-    else:
-        pass
+# @app.route('/', methods=['POST'])
+# def first_post():
+#     button_pressed = request.form["but"]
+#     if button_pressed == 'Регистрация':
+#         return redirect('/reg')
+#     else:
+#         pass
 
 
 @app.route('/reg', methods=['GET'])
@@ -34,9 +34,9 @@ def reg_post():
                        is_admin)
     if sql_ret == 0:
         if is_admin:
-            return redirect('/admin/main')
+            return redirect(url_for('admin_main', login=request.form['login']))
         else:
-            return redirect('/user/maps')
+            return redirect(url_for('usr_maps', login=request.form['login']))
     else:
         if sql_ret == 'users.mail':
             msg = 'ая почта'
@@ -48,11 +48,17 @@ def reg_post():
 
 @app.route('/admin/main', methods=['GET'])
 def admin_main():
+    login = request.args.get('login')
+    if not login:
+        return redirect('/')
     return render_template('admin_main.html', style=url_for('static', filename='css/css_for_reg.css'))
 
 
 @app.route('/admin/create_field', methods=['GET', 'POST'])
 def admin_create_field():
+    login = request.args.get('login')
+    if not login:
+        return redirect('/')
     form = None
     if request.method == 'POST':
         # add_field()
@@ -64,6 +70,9 @@ def admin_create_field():
 
 @app.route('/user/maps', methods=['GET'])
 def usr_maps():
+    login = request.args.get('login')
+    if not login:
+        return redirect('/')
     maps_lst = [(1, '1 карта', 6), (2, "2 карта", 3)]  # Потом будет получать из БД.
     # Формат: Номер карты(value), Название карты, Колличесво выстрелов
     return render_template('user_maps.html', data=maps_lst, style=url_for('static', filename='css/css_for_reg.css'))
@@ -71,18 +80,18 @@ def usr_maps():
 
 @app.route('/user/maps', methods=['POST'])
 def get_usr_maps():
-    global map_id
-    # button_pressed = request.form["but"]
-    # if button_pressed == 'Вход':
-    #     return redirect('/user/playground')
-    # else:
-    #     pass
+    login = request.args.get('login')
+    if not login:
+        return redirect('/')
     map_id = request.form['map']
     return redirect('/user/playground')
 
 
 @app.route('/user/playground', methods=['GET'])
 def usr_playground():
+    login = request.args.get('login')
+    if not login:
+        return redirect('/')
     global map_id
     local_map = [map_id, f'{map_id} карта', 6]  # Потом будет получать из БД.
     # Формат: Номер карты(айдишник в БД, равный map_id), Название карты, Колличесво выстрелов
