@@ -46,6 +46,26 @@ def reg_post():
         return render_template('registration_unit.html')
 
 
+@app.route('/log_in', methods=['GET'])
+def login():
+    return render_template('log_in.html')
+
+
+@app.route('/log_in', methods=['POST'])
+def login_post():
+    user, passw = request.form['login'], request.form['password']
+    sql_ret = log_in(user, passw)
+    if sql_ret:
+        is_admin = adm_chck(user)
+        if is_admin:
+            return redirect(url_for('admin_main', login=request.form['login']))
+        else:
+            return redirect(url_for('usr_maps', login=request.form['login']))
+    else:
+        flash(f'Логин или пароль указаны неправильно')
+        return render_template('log_in.html')
+
+
 @app.route('/admin/main', methods=['GET'])
 def admin_main():
     login = request.args.get('login')
