@@ -1,11 +1,11 @@
 <html>
 	<head>
-		<title>Registration</title>
+		<title>Регистрация</title>
 		<link rel="stylesheet" type="text/css" href="../static/css/css_for_reg.css">
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Varela Round">
 	</head>
 	<body>
-		<h1>Registration</h1>
+		<h1>Регистрация</h1>
 		{% with messages = get_flashed_messages() %}
 		 {% if messages %}
 		  <ul class="ul_cl">
@@ -33,8 +33,8 @@
 					<p><input placeholder="Придумайте пароль" name="password" type="password"></p>
 				</div>
 				<div style='overflow: auto;'>
-					<button id='next' type='button' onclick="moveTab(1)">Next step</button>
-					<button id='prev' type='button' onclick="moveTab(-1)">Previous step</button>
+					<button id='next' type='button' onclick="moveTab(1)">Следующий шаг</button>
+					<button id='prev' type='button' onclick="moveTab(-1)">Предыдущий шаг</button>
 				</div>
 				<div>
 					<span class="step active"></span>
