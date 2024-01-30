@@ -30,9 +30,10 @@
             <h5>Попыток: {{ i[2] }}</h5>
         </div>
         <div style="display: flex; align-items: flex-end; margin: 0px;">
-            <form action="/">
+            <form action="/maps/{{ data[i[1]] }}">
                 <button name="map" type="submit" value="{{ i[0] }}" class="button" style="width:135px;height:45px;">Перейти</button>
             </form>
+            <button name="map" type="submit" value="{{ i[0] }}" class="button" style="width:135px;height:45px;">Редактировать</button>
         </div>
     </div>
 
