@@ -1,4 +1,5 @@
 import sqlite3
+import json
 
 
 def init_database():
@@ -16,7 +17,9 @@ def init_database():
     cur.execute("""CREATE TABLE IF NOT EXISTS fields(
                    field_id INTEGER PRIMARY KEY,
                    field_info TEXT,
-                   field_users TEXT DEFAULT '');
+                   field_users TEXT DEFAULT '{}',
+                   field_name TEXT UNIQUE,
+                   field_prizes TEXT DEFAULT '{}');
                     """)
     con.commit()
     return True
@@ -35,32 +38,33 @@ def add_user(login, password, mail, name, is_admin):
     return 0
 
 
-def add_field(field):
+def add_field(field, prizes, name):
     con = sqlite3.connect('predprof.db')
     cur = con.cursor()
-    cur.execute("""INSERT INTO fields (field_info) 
-                       VALUES (?)
-                    """, (field,))
-    con.commit()
-    return True
+    try:
+        cur.execute("""INSERT INTO fields (field_info, field_name, field_prizes) 
+                           VALUES (?, ?, ?)
+                        """, (field, name, json.dumps(prizes),))
+        con.commit()
+    except Exception as e:
+        return str(e)[26:]
+    return 0
 
 
-def add_user_to_field(login, field_id):
+def add_user_to_field(login, field_id, shots):
     con = sqlite3.connect('predprof.db')
     cur = con.cursor()
-    fields = cur.execute("""SELECT avaliable_fields FROM accounts
+    fields = cur.execute("""SELECT avaliable_fields FROM users
                            WHERE login=?""", (login,)).fetchone()[0]
     fields += f', {field_id}'
-    cur.execute("""INSERT INTO accounts (avaliable_fields) 
-                       VALUES (?) WHERE login=?
-                    """, (fields, login,))
+    cur.execute("""UPDATE users SET avaliable_fields = ? WHERE login=? """, (fields, login,))
     con.commit()
     users = cur.execute("""SELECT field_users FROM fields
                                WHERE field_id=?""", (field_id,)).fetchone()[0]
-    users += f', {login}'
-    cur.execute("""INSERT INTO fields (field_users) 
-                           VALUES (?) WHERE field_id=?
-                        """, (users, field_id,))
+    a = json.loads(users)
+    a[login] = shots
+    cur.execute("""UPDATE fields SET field_users = ? WHERE field_id=?
+                        """, (json.dumps(a), field_id,))
     con.commit()
     return True
 
@@ -70,3 +74,22 @@ def get_fields():
     cur = con.cursor()
     fields = cur.execute("""SELECT * FROM fields""").fetchall()
     return fields
+
+
+def get_field(field_id):
+    con = sqlite3.connect('predprof.db')
+    cur = con.cursor()
+    fields = cur.execute("""SELECT * FROM fields WHERE field_id = ?""", (field_id,)).fetchall()[0]
+    return fields
+
+
+def get_user_fields(user):
+    con = sqlite3.connect('predprof.db')
+    cur = con.cursor()
+    fields = cur.execute("""SELECT avaliable_fields FROM users WHERE login=?""", (user,)).fetchall()[0][0].split(', ')
+    ret = []
+    for el in fields:
+        if el:
+            ret.append(get_field(el))
+    return ret
+
