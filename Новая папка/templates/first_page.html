@@ -2,9 +2,10 @@
 
 {% block content %}
 	<head><link rel="stylesheet" type="text/css" href="{{ style }}" ></head>
-<div class="container">
+<div class="box-1">
   <div class="row align-items-start">
     <div class="col-8">
+    <body>
       <p> Правила игры «Морской бой» знает, пожалуй, практически каждый в нашей стране. Это одна из наиболее известных, популярных и простых настольных игр, тем не менее, отличающаяся высокой интересностью и разнообразием правил. Наша версия чуть отличается...</p>
       <p>Правила игры</p>
       <p>1) Админ расставляет корабли на поле и размещает под ними разные призы на разную сумму</p>
@@ -13,8 +14,13 @@
       <p>4) Используются только однопалубные корабли и никакие из них не соприкасаются, в том числе и по диагонали</p>
     </div>
     <div class="col-4 d-flex flex-column" style="margin: 100px 0px">
-      <button type="button" class="btn btn-outline-success m-2">Регестрация</button>
-      <button type="button" class="btn btn-outline-dark m-2">Вход</button>
+      <form action="/reg">
+        <button class="button" style="width:150px;height:45px;cursor:pointer">Регестрация</button>
+      </form>
+      <form action="/">
+      <button class="button" style="width:150px;height:45px;cursor:pointer">Вход</button>
+      </form>
+    </body>
     </div>
   </div>
 </div>
