@@ -11,10 +11,10 @@ function showTab(){
 		document.getElementById('prev').style.display = 'inline'
 	}
 	if(curTab == x.length - 1){
-		document.getElementById('next').innerHTML = 'Finish'
+		document.getElementById('next').innerHTML = 'Отправить'
 	}
 	else{
-		document.getElementById('next').innerHTML = 'Next step'
+		document.getElementById('next').innerHTML = 'Следующий шаг'
 	}
 	stepIndicator()
 }
