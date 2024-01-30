@@ -1,122 +1,114 @@
-from flask import Flask, url_for, request, render_template, redirect, flash
-from sqll import *
+import sqlite3
+import json
 
 
-app = Flask(__name__)
-app.config['SECRET_KEY'] = 'predpof_code_crusaders'
-init_database()
+def init_database():
+    con = sqlite3.connect('predprof.db')
+    cur = con.cursor()
+    cur.execute("""CREATE TABLE IF NOT EXISTS users(
+                   userid INTEGER PRIMARY KEY,
+                   login TEXT UNIQUE,
+                   password TEXT,
+                   mail TEXT UNIQUE,
+                   name TEXT,
+                   is_admin INTEGER DEFAULT 0,
+                   avaliable_fields TEXT DEFAULT '');
+                """)
+    cur.execute("""CREATE TABLE IF NOT EXISTS fields(
+                   field_id INTEGER PRIMARY KEY,
+                   field_info TEXT,
+                   field_users TEXT DEFAULT '{}',
+                   field_name TEXT UNIQUE,
+                   field_prizes TEXT DEFAULT '{}');
+                    """)
+    con.commit()
+    return True
 
 
-@app.route('/', methods=['GET'])
-def first():
-    return render_template('first_page.html', style=url_for('static', filename='css/css_for_reg.css'))
+def add_user(login, password, mail, name, is_admin):
+    con = sqlite3.connect('predprof.db')
+    cur = con.cursor()
+    try:
+        cur.execute("""INSERT INTO users (login, password, mail, name, is_admin) 
+                           VALUES (?, ?, ?, ?, ?)
+                        """, (login, password, mail, name, is_admin,))
+        con.commit()
+    except Exception as e:
+        return str(e)[26:]
+    return 0
 
 
-# @app.route('/', methods=['POST'])
-# def first_post():
-#     button_pressed = request.form["but"]
-#     if button_pressed == 'Регистрация':
-#         return redirect('/reg')
-#     else:
-#         pass
+def log_in(login, passw):
+    con = sqlite3.connect('predprof.db')
+    cur = con.cursor()
+    try:
+        pwd = cur.execute("""SELECT password FROM users WHERE login=?""", (login,)).fetchone()[0]
+    except TypeError:
+        return False
+    if passw == pwd:
+        return True
+    return False
 
 
-@app.route('/reg', methods=['GET'])
-def reg():
-    return render_template('registration_unit.html')
+def adm_chck(login):
+    con = sqlite3.connect('predprof.db')
+    cur = con.cursor()
+    adm = cur.execute("""SELECT is_admin FROM users WHERE login=?""", (login,)).fetchone()[0]
+    return adm
 
 
-@app.route('/reg', methods=['POST'])
-def reg_post():
-    is_admin = 1 if request.form['admin'] == 'AdmCd.exe' else 0
-    sql_ret = add_user(request.form['login'], request.form['password'],
-                       request.form['email'], f"{request.form['name']} {request.form['surname']}",
-                       is_admin)
-    if sql_ret == 0:
-        if is_admin:
-            return redirect(url_for('admin_main', login=request.form['login']))
-        else:
-            return redirect(url_for('usr_maps', login=request.form['login']))
-    else:
-        if sql_ret == 'users.mail':
-            msg = 'ая почта'
-        else:
-            msg = 'ый логин'
-        flash(f'Указанн{msg} уже существует')
-        return render_template('registration_unit.html')
+def add_field(field, prizes, name):
+    con = sqlite3.connect('predprof.db')
+    cur = con.cursor()
+    try:
+        cur.execute("""INSERT INTO fields (field_info, field_name, field_prizes) 
+                           VALUES (?, ?, ?)
+                        """, (field, name, json.dumps(prizes),))
+        con.commit()
+    except Exception as e:
+        return str(e)[26:]
+    return 0
 
 
-@app.route('/log_in', methods=['GET'])
-def login():
-    return render_template('log_in.html')
+def add_user_to_field(login, field_id, shots):
+    con = sqlite3.connect('predprof.db')
+    cur = con.cursor()
+    fields = cur.execute("""SELECT avaliable_fields FROM users
+                           WHERE login=?""", (login,)).fetchone()[0]
+    fields += f', {field_id}'
+    cur.execute("""UPDATE users SET avaliable_fields = ? WHERE login=? """, (fields, login,))
+    con.commit()
+    users = cur.execute("""SELECT field_users FROM fields
+                               WHERE field_id=?""", (field_id,)).fetchone()[0]
+    a = json.loads(users)
+    a[login] = shots
+    cur.execute("""UPDATE fields SET field_users = ? WHERE field_id=?
+                        """, (json.dumps(a), field_id,))
+    con.commit()
+    return True
 
 
-@app.route('/log_in', methods=['POST'])
-def login_post():
-    user, passw = request.form['login'], request.form['password']
-    sql_ret = log_in(user, passw)
-    if sql_ret:
-        is_admin = adm_chck(user)
-        if is_admin:
-            return redirect(url_for('admin_main', login=request.form['login']))
-        else:
-            return redirect(url_for('usr_maps', login=request.form['login']))
-    else:
-        flash(f'Логин или пароль указаны неправильно')
-        return render_template('log_in.html')
+def get_fields():
+    con = sqlite3.connect('predprof.db')
+    cur = con.cursor()
+    fields = cur.execute("""SELECT * FROM fields""").fetchall()
+    return fields
 
 
-@app.route('/admin/main', methods=['GET'])
-def admin_main():
-    login = request.args.get('login')
-    if not login:
-        return redirect('/')
-    return render_template('admin_main.html', style=url_for('static', filename='css/css_for_reg.css'))
+def get_field(field_id):
+    con = sqlite3.connect('predprof.db')
+    cur = con.cursor()
+    fields = cur.execute("""SELECT * FROM fields WHERE field_id = ?""", (field_id,)).fetchall()[0]
+    return fields
 
 
-@app.route('/admin/create_field', methods=['GET', 'POST'])
-def admin_create_field():
-    login = request.args.get('login')
-    if not login:
-        return redirect('/')
-    form = None
-    if request.method == 'POST':
-        # add_field()
-        pass
-    else:
-        return render_template('admin_create_field.html',
-                               style=url_for('static', filename='css/css_for_reg.css'), form=form)
+def get_user_fields(user):
+    con = sqlite3.connect('predprof.db')
+    cur = con.cursor()
+    fields = cur.execute("""SELECT avaliable_fields FROM users WHERE login=?""", (user,)).fetchall()[0][0].split(', ')
+    ret = []
+    for el in fields:
+        if el:
+            ret.append(get_field(el))
+    return ret
 
-
-@app.route('/user/maps', methods=['GET'])
-def usr_maps():
-    login = request.args.get('login')
-    if not login:
-        return redirect('/')
-    maps_lst = [(1, '1 карта', 6), (2, "2 карта", 3)]  # Потом будет получать из БД.
-    # Формат: Номер карты(value), Название карты, Колличесво выстрелов
-    return render_template('user_maps.html', data=maps_lst, style=url_for('static', filename='css/css_for_reg.css'))
-
-
-@app.route('/user/maps', methods=['POST'])
-def get_usr_maps():
-    login = request.args.get('login')
-    if not login:
-        return redirect('/')
-    map_id = request.form['map']
-    return redirect('/user/playground')
-
-
-@app.route('/user/playground', methods=['GET'])
-def usr_playground():
-    login = request.args.get('login')
-    if not login:
-        return redirect('/')
-    global map_id
-    local_map = [map_id, f'{map_id} карта', 6]  # Потом будет получать из БД.
-    # Формат: Номер карты(айдишник в БД, равный map_id), Название карты, Колличесво выстрелов
-    return render_template('user_playground.html', Field=local_map[1], style=url_for('static', filename='css/css_for_reg.css'))
-
-
-if __name__ == '__main__':
-    app.run(port=1024, host='127.0.0.1')
