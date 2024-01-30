@@ -1,0 +1,37 @@
+<html>
+	<head>
+		<title>Вход</title>
+		<link rel="stylesheet" type="text/css" href="../static/css/css_for_reg.css">
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Varela Round">
+	</head>
+	<body>
+		<h1>Вход</h1>
+		{% with messages = get_flashed_messages() %}
+		 {% if messages %}
+		  <ul class="ul_cl">
+		  {% for message in messages %}
+			<li>{{ message }}</li>
+		  {% endfor %}
+		  </ul>
+		 {% endif %}
+		{% endwith %}
+		<div class="box-1">
+			<form id='form' method="post">
+
+				<div class='tab'>
+					<p>Пожалуйста, введите логин и пароль:</p>
+					<p><input placeholder="Ваш логин" name="login"></p>
+					<p><input placeholder="Ваш пароль" name="password" type="password"></p>
+				</div>
+				<div style='overflow: auto;'>
+					<button id='next' type='button' onclick="moveTab(1)">Следующий шаг</button>
+					<button id='prev' type='button' onclick="moveTab(-1)">Предыдущий шаг</button>
+				</div>
+				<div>
+					<span class="step active"></span>
+				</div>
+			</form>
+		</div>
+		<script src="{{url_for('static', filename='script.js')}}"></script>
+	</body>
+</html>
