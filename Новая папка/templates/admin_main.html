@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+{% extends "base.html" %}
+
+{% block content %}
+<head>
+    <meta charset="UTF-8">
+    <title>Страница админа</title>
+        <link rel="stylesheet" type="text/css" href="../static/css/css_for_reg.css">
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Varela Round">
+</head>
+<body>
+    <h1>Страница админа</h1>
+    <div class="center-r">
+        <form action="/admin/create_field">
+            <button class="button" style="width:135px;height:45px;cursor:pointer">Создать поле</button>
+        </form>
+    </div>
+    <div class="center-n">
+        <h3>Всего полей: {{ variable }}</h3>
+    </div>
+
+<div class="box-1">
+
+    {% for i in data %}
+
+    <div style="display: flex; justify-content: space-between; border-bottom: 1px solid black;">
+        <div>
+            <h2>{{ i[1] }}</h2>
+            <h5>Попыток: {{ i[2] }}</h5>
+        </div>
+        <div style="display: flex; align-items: flex-end; margin: 0px;">
+            <form action="/">
+                <button name="map" type="submit" value="{{ i[0] }}" class="button" style="width:135px;height:45px;">Перейти</button>
+            </form>
+        </div>
+    </div>
+
+    {% endfor %}
+</div>
+</body>
+</html>
+{% endblock %}
