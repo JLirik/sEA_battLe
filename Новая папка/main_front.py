@@ -36,7 +36,7 @@ def reg_post():
         if is_admin:
             return redirect('/admin/main')
         else:
-            return redirect('/user/main')
+            return redirect('/user/maps')
     else:
         if sql_ret == 'users.mail':
             msg = 'ая почта'
@@ -67,6 +67,26 @@ def usr_maps():
     maps_lst = [(1, '1 карта', 6), (2, "2 карта", 3)]  # Потом будет получать из БД.
     # Формат: Номер карты(value), Название карты, Колличесво выстрелов
     return render_template('user_maps.html', data=maps_lst, style=url_for('static', filename='css/css_for_reg.css'))
+
+
+@app.route('/user/maps', methods=['POST'])
+def get_usr_maps():
+    global map_id
+    # button_pressed = request.form["but"]
+    # if button_pressed == 'Вход':
+    #     return redirect('/user/playground')
+    # else:
+    #     pass
+    map_id = request.form['map']
+    return redirect('/user/playground')
+
+
+@app.route('/user/playground', methods=['GET'])
+def usr_playground():
+    global map_id
+    local_map = [map_id, f'{map_id} карта', 6]  # Потом будет получать из БД.
+    # Формат: Номер карты(айдишник в БД, равный map_id), Название карты, Колличесво выстрелов
+    return render_template('user_playground.html', Field=local_map[1], style=url_for('static', filename='css/css_for_reg.css'))
 
 
 if __name__ == '__main__':
