@@ -35,8 +35,7 @@ def reg_post():
     if sql_ret == 0:
         if is_admin:
             return redirect(url_for('admin_main', login=request.form['login']))
-        else:
-            return redirect(url_for('usr_maps', login=request.form['login']))
+        return redirect(url_for('usr_maps', login=request.form['login']))
     else:
         if sql_ret == 'users.mail':
             msg = 'ая почта'
@@ -59,8 +58,7 @@ def login_post():
         is_admin = adm_chck(user)
         if is_admin:
             return redirect(url_for('admin_main', login=request.form['login']))
-        else:
-            return redirect(url_for('usr_maps', login=request.form['login']))
+        return redirect(url_for('usr_maps', login=request.form['login']))
     else:
         flash(f'Логин или пароль указаны неправильно')
         return render_template('log_in.html')
@@ -71,7 +69,8 @@ def admin_main():
     login = request.args.get('login')
     if not login:
         return redirect('/')
-    return render_template('admin_main.html', style=url_for('static', filename='css/css_for_reg.css'))
+    map_lst = get_fields()
+    return render_template('admin_main.html', style=url_for('static', filename='css/css_for_reg.css'), login=login, data=map_lst)
 
 
 @app.route('/admin/create_field', methods=['GET', 'POST'])
@@ -93,28 +92,26 @@ def usr_maps():
     login = request.args.get('login')
     if not login:
         return redirect('/')
-    maps_lst = [(1, '1 карта', 6), (2, "2 карта", 3)]  # Потом будет получать из БД.
+    maps_lst = get_user_fields(login)  # Потом будет получать из БД.
     # Формат: Номер карты(value), Название карты, Колличесво выстрелов
-    return render_template('user_maps.html', data=maps_lst, style=url_for('static', filename='css/css_for_reg.css'))
+    return render_template('user_maps.html', data=maps_lst, style=url_for('static', filename='css/css_for_reg.css'), login=login)
 
 
 @app.route('/user/maps', methods=['POST'])
 def get_usr_maps():
-    login = request.args.get('login')
-    if not login:
-        return redirect('/')
     map_id = request.form['map']
-    return redirect('/user/playground')
+    login = request.form['login']
+    return redirect(url_for('usr_playground', login=login, map_id=map_id))
 
 
 @app.route('/user/playground', methods=['GET'])
 def usr_playground():
     login = request.args.get('login')
+    map_id = request.args.get('map_id')
     if not login:
         return redirect('/')
-    global map_id
-    local_map = [map_id, f'{map_id} карта', 6]  # Потом будет получать из БД.
-    # Формат: Номер карты(айдишник в БД, равный map_id), Название карты, Колличесво выстрелов
+    local_map = get_field(map_id)
+    # Формат: Номер карты, Расстановка на поле, словарь с кол-вом выстрелов по логину, имя карты, словарь призов
     return render_template('user_playground.html', Field=local_map[1], style=url_for('static', filename='css/css_for_reg.css'))
 
 

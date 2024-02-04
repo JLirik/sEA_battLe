@@ -109,6 +109,11 @@ def get_user_fields(user):
     ret = []
     for el in fields:
         if el:
-            ret.append(get_field(el))
+            tmp = get_field(el)
+            changed = json.loads(tmp[2])[user]
+            ret.append((tmp[0], tmp[1], changed, tmp[3], tmp[4]))
     return ret
 
+
+# add_user_to_field('89685433354', 1, 105)
+# add_field('----k---', {1: 'govna', 2: 'bullshit'}, 'suka')

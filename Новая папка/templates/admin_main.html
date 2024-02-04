@@ -12,7 +12,8 @@
 <body>
     <h1>Страница админа</h1>
     <div class="center-r">
-        <form action="/admin/create_field">
+        <form action="/admin/create_field" method="get">
+            <input type="hidden" name="login" id="log" value="{{ login }}" />
             <button class="button" style="width:135px;height:45px;cursor:pointer">Создать поле</button>
         </form>
     </div>
@@ -30,7 +31,7 @@
             <h5>Попыток: {{ i[2] }}</h5>
         </div>
         <div style="display: flex; align-items: flex-end; margin: 0px;">
-            <form action="/maps/{{ data[i[1]] }}">
+            <form action="/maps/{{ data[i[1]] }}?login={{ login }}">
                 <button name="map" type="submit" value="{{ i[0] }}" class="button" style="width:135px;height:45px;">Перейти</button>
             </form>
             <button name="map" type="submit" value="{{ i[0] }}" class="button" style="width:135px;height:45px;">Редактировать</button>
