@@ -117,3 +117,4 @@ def get_user_fields(user):
 
 # add_user_to_field('89685433354', 1, 105)
 # add_field('----k---', {1: 'govna', 2: 'bullshit'}, 'suka')
+# /user/maps?login=SeliverstovDm.

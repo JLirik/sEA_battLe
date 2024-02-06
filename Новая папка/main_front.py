@@ -111,8 +111,11 @@ def usr_playground():
     if not login:
         return redirect('/')
     local_map = get_field(map_id)
+
+    converted = local_map[1].split('\n')
+    print(converted)
     # Формат: Номер карты, Расстановка на поле, словарь с кол-вом выстрелов по логину, имя карты, словарь призов
-    return render_template('user_playground.html', Field=local_map[1], style=url_for('static', filename='css/css_for_reg.css'))
+    return render_template('user_playground.html', size=len(converted), style=url_for('static', filename='css/css_for_reg.css'))
 
 
 if __name__ == '__main__':

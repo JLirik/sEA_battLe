@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+	<head><link rel="stylesheet" type="text/css" href="{{ style }}" ></head>
+
+<body>
+	<div class="container">
+  <div class="row">
+    <div class="col-8">
+		<div style="display: inline-block;">
+			{% for i in range({{ size }}) %}
+				<div>
+					{% for j in range({{ size }}) %}
+						<button class="button" type="button" value="{{ i }}-{{ j }}" style="width: 30px; height: 50px; color: white;"></button>
+					{% endfor %}
+				</div>
+			{% endfor %}
+		</div>
+		<br>
+		<button id="save" type="submit">Сохранить</button>
+
+	</div>
+    <div class="col-4">Последующие колонки продолжаются вдоль новой строки.</div>
+  </div>
+</div>
+
+</body>
+
+{% endblock %}
