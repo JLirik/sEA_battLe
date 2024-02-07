@@ -75,27 +75,38 @@ def login_post():
 @app.route('/admin/main', methods=['GET'])
 def admin_main():
     def post_game(data):
-        print(1)
-        print(data)
-        with open('map.txt', 'w') as f:
-            a = ''
-            tmp = int(len(data) ** 0.5)
-            for i in range(0, len(data), tmp):
-                a += data[i:i + tmp] + '\n'
-            f.write(a.strip())
-        print(1)
+        a = ''
+        tmp = int(len(data) ** 0.5)
+        for i in range(0, len(data), tmp):
+            a += data[i:i + tmp] + '\n'
         print(a)
+        add_field(a.strip(), {}, 'gg')
+        print(123)
         return True
 
+    def add_user(name, field, number):
+        add_user_to_field(name, field, number)
+
     print(555)
+    name = request.args.get('name')
+    field = request.args.get('field')
     data = request.args.get('data')
     login = request.args.get('login')
+    number = request.args.get('tentacles')
+    print(name, 234578)
+    print(data, 456787656789)
+    print(number, 'wqewqe')
     if not login:
         return redirect('/')
     if data:
         data = request.args.get('data')
-        print(data)
         post_game(data)
+        return redirect(url_for('admin_main', login=login))
+    if name and field:
+        name = request.args.get('name')
+        field = request.args.get('field')
+        number = request.args.get('tentacles')
+        add_user(name, field, number)
         return redirect(url_for('admin_main', login=login))
     else:
         map_lst = get_fields()
@@ -119,8 +130,23 @@ def admin_main():
         for i in users_list:
             if i[1] != login:
                 users_list.remove(i)
+        print(map_lst)
         return render_template('admin_main.html', style=url_for('static', filename='css/css_for_reg.css'), login=login, data=map_lst, popitki=popitki, users=users_list)
 
+
+@app.route('/admin/add_users', methods=['GET', 'POST'])
+def add_users():
+    login =  request.args.get('login')
+    a = request.args.get('map')
+    print(a)
+    users_list = get_users()
+    print(users_list)
+    map_lst = get_fields()
+    print(map_lst)
+    if not login:
+        return redirect('/')
+    else:
+        return render_template('add_users.html', data=users_list, maps=map_lst, name=a, login=login)
 
 @app.route('/admin/create_field', methods=['GET'])
 def index():
