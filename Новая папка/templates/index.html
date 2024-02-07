@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Поле</title>
+        <link rel="stylesheet" type="text/css" href="../static/css/css_for_reg.css">
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Varela Round">
+    <meta charset="utf8">
+    <style>
+        .button {
+            width: 100px;
+            height: 100px;
+            background-color: white;
+            border: 1px solid black;
+            border-radius: 5px;
+        }
+
+        .button.clicked {
+            background-color: blue;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+</head>
+<body>
+    <h1>Разместите корабли</h1>
+    <div class="box-1">
+    <form method="post" action="/game/{{ size }}">
+        <input type="hidden" name="login" id="log" value="{{ login }}" />
+        <div style="display: inline-block;">
+            {% for i in range(size) %}
+                <div>
+                    {% for j in range(size) %}
+                        <button class="button" value="{{ i }}-{{ j }}" type="button"></button>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        </div>
+        <br>
+    </form>
+    <div class="center-r">
+        <form action="/admin/main" method="get" >
+            <input type="hidden" name="login" id="log" value="{{ login }}" />
+            <input type="hidden" name="data" id="log1" />
+            <button id="save" class="button1" type="submit" style="width:135px;height:45px;cursor:pointer">Сохранить</button>
+        </form>
+    </div>
+    </div>
+<script src="{{url_for('static', filename='script1.js')}}"></script>
+</body>
+</html>

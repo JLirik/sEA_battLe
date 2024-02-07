@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>создание поля</title>
+        <link rel="stylesheet" type="text/css" href="../static/css/css_for_reg.css">
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Varela Round">
+</head>
+<body>
+    <h1>Укажите размер поля</h1>
+    <div class="box-1">
+    <form method="POST" action="/admin/create_field?login={{ login }}">
+        {{ form.csrf_token }}
+        {{ form.hidden_tag() }}
+        {{ form.size.label }} {{ form.size() }}
+        {{ form.submit() }}
+    </form>
+</body>
+</html>
