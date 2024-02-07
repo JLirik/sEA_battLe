@@ -10,15 +10,15 @@
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Varela Round">
 </head>
 <body>
-    <h1>Страница админа</h1>
+    <h1>Добро пожаловать на страницу админа, {{ users[0][4]}}</h1>
     <div class="center-r">
         <form action="/admin/create_field" method="get">
             <input type="hidden" name="login" id="log" value="{{ login }}" />
-            <button class="button" style="width:135px;height:45px;cursor:pointer">Создать поле</button>
+            <button class="button1" style="width:135px;height:45px;cursor:pointer">Создать поле</button>
         </form>
     </div>
     <div class="center-n">
-        <h3>Всего полей: {{ variable }}</h3>
+        <h3>Всего полей: {{ data[-1][0] }}</h3>
     </div>
 
 <div class="box-1">
@@ -27,14 +27,20 @@
 
     <div style="display: flex; justify-content: space-between; border-bottom: 1px solid black;">
         <div>
-            <h2>{{ i[1] }}</h2>
-            <h5>Попыток: {{ i[2] }}</h5>
+            <div>
+                <h2>{{ i[3] }}</h2>
+            </div>
+            {% for j in popitki %}
+                {% if i[0] == j[0] %}
+                    <h5>Попыток у {{ j[1] }}: {{ j[2][1] }}</h5>
+                {%endif%}
+            {%endfor%}
         </div>
         <div style="display: flex; align-items: flex-end; margin: 0px;">
-            <form action="/maps/{{ data[i[1]] }}?login={{ login }}">
-                <button name="map" type="submit" value="{{ i[0] }}" class="button" style="width:135px;height:45px;">Перейти</button>
+            <form action="/maps/{{ data[i[1]] }}?login={{ login }}" method="get">
+                <button name="map" type="submit" value="{{ i[0] }}" class="button1" style="width:135px;height:45px;">Добавить пользователч</button>
             </form>
-            <button name="map" type="submit" value="{{ i[0] }}" class="button" style="width:135px;height:45px;">Редактировать</button>
+            <button name="map" type="submit" value="{{ i[0] }}" class="button1" style="width:135px;height:45px;">Редактировать</button>
         </div>
     </div>
 
