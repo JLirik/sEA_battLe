@@ -1,3 +1,5 @@
+import json
+
 from flask import Flask, url_for, request, render_template, redirect, flash
 from sqll import *
 from flask_wtf import FlaskForm
@@ -73,11 +75,16 @@ def login_post():
 @app.route('/admin/main', methods=['GET'])
 def admin_main():
     def post_game(data):
-        a = ''
-        tmp = int(len(data) ** 0.5)
-        for i in range(0, len(data), tmp):
-            a += data[i:i + tmp] + '\n'
-        add_field(a.strip(), {}, 'gg')
+        print(1)
+        print(data)
+        with open('map.txt', 'w') as f:
+            a = ''
+            tmp = int(len(data) ** 0.5)
+            for i in range(0, len(data), tmp):
+                a += data[i:i + tmp] + '\n'
+            f.write(a.strip())
+        print(1)
+        print(a)
         return True
 
     print(555)
@@ -161,12 +168,8 @@ def usr_maps():
     if not login:
         return redirect('/')
     maps_lst = get_user_fields(login)  # Потом будет получать из БД.
-    users_list = get_users()
-    for i in users_list:
-        if i[1] != login:
-            users_list.remove(i)
     # Формат: Номер карты(value), Название карты, Колличесво выстрелов
-    return render_template('user_maps.html', data=maps_lst, style=url_for('static', filename='css/css_for_reg.css'), login=login, users=users_list)
+    return render_template('user_maps.html', data=maps_lst, style=url_for('static', filename='css/css_for_reg.css'), login=login)
 
 
 @app.route('/user/maps', methods=['POST'])
@@ -178,13 +181,65 @@ def get_usr_maps():
 
 @app.route('/user/playground', methods=['GET'])
 def usr_playground():
-    login = request.args.get('login')
+    logn = request.args.get('login')
     map_id = request.args.get('map_id')
-    if not login:
+    try:
+        data = request.args.get('data')
+    except Exception as e:
+        data = ''
+    if not logn:
         return redirect('/')
-    local_map = get_field(map_id)
-    # Формат: Номер карты, Расстановка на поле, словарь с кол-вом выстрелов по логину, имя карты, словарь призов
-    return render_template('user_playground.html', Field=local_map[1], style=url_for('static', filename='css/css_for_reg.css'))
+    if not data:
+        local_map = get_field(map_id)
+        converted = local_map[1].split('\n')
+        # Формат: Номер карты, Расстановка на поле, словарь с кол-вом выстрелов по логину, имя карты, словарь призов
+        return render_template('user_playground.html', size=len(converted), shots=json.loads(local_map[2])[logn], map_id=map_id, login=logn, field=converted, style=url_for('static', filename='css/css_for_reg.css'))
+    else:
+        print(data)
+        if data.count('#') > json.loads(get_field(map_id)[2])[logn]:
+            flash(f'У вас недостаточно снарядов для выстрела по выбранному количеству клеток')
+            flash('(Нехватка боеприпасов 70%!!!)')
+            local_map = get_field(map_id)
+            converted = local_map[1].split('\n')
+            return render_template('user_playground.html', size=len(converted), shots=json.loads(local_map[2])[logn],
+                                   map_id=map_id, login=logn, field=converted,
+                                   style=url_for('static', filename='css/css_for_reg.css'))
+        else:
+            local_map = get_field(map_id)
+            shots_left = json.loads(local_map[2])[logn] - data.count('#')
+            new_dict = json.loads(local_map[2])
+            new_dict[logn] = shots_left
+            a = ''
+            counter = 0
+            for i in range(0, len(data)):
+                a += data[i]
+                if (len(a) - counter) % int(len(data) ** 0.5) == 0:
+                    a += '\n'
+                    counter += 1
+            aa = ""
+            for i in a.split("\n")[:-1]:
+                aa += i[::-1] + "\n"
+            new_map = aa.split('\n')[:-1]
+            print(new_map)
+
+            local_map = get_field(map_id)
+            converted = local_map[1].split('\n')
+            print(converted)
+
+            for y in range(len(converted)):
+                for x in range(len(converted)):
+                    if converted[y][x] == 'k' and new_map[y][x] == '#':
+                        print('Вы попали!')
+                        row = list(converted[y])
+                        row[x] = '#'
+                        converted[y] = ''.join(row)
+                    elif converted[y][x] == '-' and new_map[y][x] == '#':
+                        row = list(converted[y])
+                        row[x] = '#'
+                        converted[y] = ''.join(row)
+            to_bd = '\n'.join(converted)
+            nothing = save_map_ch(map_id, to_bd, new_dict)
+            return redirect(url_for('usr_maps', login=logn))
 
 
 if __name__ == '__main__':
