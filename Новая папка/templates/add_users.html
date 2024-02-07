@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+{% extends "base.html" %}
+
+{% block content %}
+<head>
+    <meta charset="UTF-8">
+    <title>Страница добавления пользователей</title>
+        <link rel="stylesheet" type="text/css" href="../static/css/css_for_reg.css">
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Varela Round">
+<style>
+    .button.clicked {
+    background-color: blue;
+    }
+</style>
+</head>
+<body>
+<div>
+    <h5>Имя карты - {{ name }}</h5>
+    {% for i in data %}
+        {% for j in maps %}
+            {% if name in j%}
+                {% if i[5] == 0 and i[1] not in j[2] %}
+                <div class="box-1">
+                    <h5>Имя пользователя - {{ i[4] }}</h5>
+                    <h5>Логин пользователя - {{ i[1] }}</h5>
+                        <form action="/admin/main" method="get">
+                             <input type="hidden" name="name" value="{{ i[1] }}" />
+                            <input type="hidden" name="field" value="{{ j[0] }}" />
+                            <button name="login" type="submit" value="{{ login }}" class="button1" style="width:135px;height:60px;">Добавить на карту</button>
+                             <input type="number" id="tentacles" placeholder="Введите количество выстрелов" name="tentacles" min="1" style="width:500px;height:30px;" />
+                        </form>
+                </div>
+                {%endif%}
+            {%endif%}
+        {% endfor %}
+    {% endfor %}
+    <form action="/admin/main" method="get">
+        <button name="login" type="submit" value="{{ login }}" class="button1" style="width:270px;height:45px;">Вернуться</button>
+    </form>
+</div>
+</body>
+</html>
+{% endblock %}
