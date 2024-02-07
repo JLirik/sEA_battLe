@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+	<head><link rel="stylesheet" type="text/css" href="../static/css/css_for_reg.css"></head>
+<h1>Добавьте новый приз</h1>
+
+<div class="box-1">
+
+    <div style="display: flex; justify-content: space-between; border-bottom: 1px solid black;">
+        <div style="display: flex; align-items: flex-end; margin: 0px;">
+            <form action="/user/maps" method="post">
+                <input type="hidden" name="login" id="log" value="{{ login }}" />
+                <h1>Введите название приза</h1>
+                <input name="name" id="log3" required/>
+                <h1>Введите символ приза</h1>
+                <input name="symbol" id="log4" maxlength="1" required/>
+                <h1>Добавьте картинку приза</h1>
+                <input name="icon" accept="image/" id="log5" type="file" required/>
+                <button name="sab" class="button1" style="width:135px;height:45px;">Отправить</button>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
