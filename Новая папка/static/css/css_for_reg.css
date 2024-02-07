@@ -8,19 +8,12 @@ body {
 	display: none;
 }
 
-.ul_cl {
-    color: #FF0000;
-    font-size: 25px;
-    padding-left: 0px;
-    padding-right: 0px;
-}
-
 .box-1 {
   width: 60%;
   background-color: #99CCCC;
   font-size: 25px;
   padding: 10%;
-  padding-top: 0px;
+  padding-top: 20px;
   border: 10px solid black;
   margin:0px auto;
   margin-top: 5%;
@@ -42,12 +35,12 @@ input.invalid {
 	opacity: 0.35;
 }
 
-button {
+.button1 {
 	background-color: green;
-	border-radius: 5px;
 	float: right;
 	border: none;
 	font-family: Varela Round;
+	border-radius: 5px;
 	font-size: 17px;
 	color: white;
 	padding: 10px 20px;
@@ -79,5 +72,124 @@ button:hover {
 .step.active {
 	background-color: white;
 }
-
-
+.center-n {
+    display: flex;
+    justify-content: left;
+    align-items: left;
+}
+.center-r {
+    display: flex;
+    justify-content: right;
+    align-items: right;
+}
+.component-1 {
+  padding: 59px 7px 11px 25px;
+}
+.frame-4 {
+  width: 97.77%;
+  height: 0.1%;
+  position: absolute;
+  right: 7px;
+  top: 60px;
+}
+.rectangleq {
+  width: 1400px;
+  height: 900px;
+  background-color: var(--gainsboro);
+  position: absolute;
+  left: 0;
+  bottom: -899px;
+}
+.korabl {
+  width: calc(33.73% - 20px);
+  height: calc(100% - 20px);
+  background-size: 100% 100%;
+  background-position: center;
+  background-image: url("https://static.overlay-tech.com/assets/32ad0a86-df40-432d-9606-352e85acbb23.png");
+  padding: 10px;
+  position: absolute;
+  left: 42px;
+  top: 0;
+}
+.voda {
+  width: calc(39.59% - 20px);
+  height: calc(28.35% - 20px);
+  background-size: 100% 100%;
+  background-position: center;
+  background-image: url("https://static.overlay-tech.com/assets/a0c3ab09-7c44-4b15-970d-892c49f00e6f.png");
+  padding: 10px;
+  position: absolute;
+  left: 0;
+  bottom: 11px;
+}
+.flex-wrapper-one {
+  background-size: 100% 100%;
+  background-position: center;
+  background-image: url("https://static.overlay-tech.com/assets/d66bea56-f201-4642-bd29-211ff305fdb2.png");
+  padding: 26px 18px 825px 907px;
+  display: flex;
+  align-items: flex-start;
+  position: relative;
+}
+.vhod {
+  width: calc(33.89% - 105px);
+  background-color: var(--silver);
+  overflow: hidden;
+  border-radius: 10px;
+  padding: 10px 52.5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: stretch;
+}
+.vhod2 {
+  color: var(--gray);
+  text-align: center;
+  font-family: var(--inter-24-regular-family);
+  font-size: var(--inter-24-regular-size);
+  font-weight: var(--inter-24-regular-weight);
+  line-height: var(--inter-24-regular-line-height);
+}
+.registracija {
+  width: calc(49.89% - 85px);
+  background-color: var(--silver);
+  overflow: hidden;
+  border-radius: 10px;
+  padding: 10px 42.5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: stretch;
+}
+.frame-1 {
+  width: calc(68.44% - 20px);
+  height: 10.21%;
+  padding: 0 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  right: 0;
+  top: 172px;
+}
+.vector {
+  width: 960px;
+  height: 99px;
+}
+.frame-2 {
+  width: calc(61.8% - 20px);
+  height: 54.66%;
+  padding: 0 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  right: 5.07px;
+  bottom: 130.82px;
+}
+.vector-two {
+  width: 864.93px;
+  height: 530.18px;
+}
