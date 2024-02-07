@@ -200,3 +200,10 @@ button:hover {
   width: 864.93px;
   height: 530.18px;
 }
+
+.ul_cl {
+    color: #FF0000;
+    font-size: 25px;
+    padding-left: 0px;
+    padding-right: 0px;
+}

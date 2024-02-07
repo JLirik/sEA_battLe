@@ -4,9 +4,12 @@
 	<head><link rel="stylesheet" type="text/css" href="{{ style }}" >
 		<style>
 			.button {
+				width: 50px;
+				height: 50px;
+				background-color: white;
 				border: 1px solid black;
-				border-radius: 0px;
-				background: #FFF;
+				border-radius: 5px;
+				margin: 0px;
 			}
 
 			.button.clicked {
@@ -50,16 +53,19 @@
 		<h3>
 			Ваше колличество выстреллов: {{ shots }}
 		</h3>
+		<h5>
+			Красные клетки - те, по которым уже стреляли<br>Синие клетки - клетки, выбранные вами<br>Белые клетки - пустые клетки - в них может быть приз
+		</h5>
     <form method="post" action="/game/{{ size }}">
         <input type="hidden" name="login" id="log" value="{{ login }}" />
             <div style="display: inline-block;">
 				{% for i in range(size) %}
 					<div>
-						{% for j in range(size - 1, -1, -1) %}
-							{% if field[i][j] in ('-', 'k'): %}
-								<button name="cell" class="button" type="button" value="{{ j }}-{{ i }}" style="width: 50px; height: 50px; border-radius: 0px; border: 1px solid gray;"></button>
+						{% for j in range(size) %}
+							{% if field[i][j] != '#': %}
+								<button name="cell" class="button" type="button" value="{{ j }}-{{ i }}" style="margin: 0px; border-radius: 0px;"></button>
 							{% elif field[i][j] == '#': %}
-								<button name="cell" class="button" type="button" value="{{ j }}-{{ i }}" style="width: 50px; height: 50px; background: red; border-radius: 0px; border: 1px solid gray;" disabled></button>
+								<button name="cell" class="button" type="button" value="{{ j }}-{{ i }}" style="background: red; margin: 0px; border-radius: 0px;" disabled></button>
 							{% endif %}
 						{% endfor %}
 					</div>

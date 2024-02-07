@@ -244,7 +244,7 @@ def usr_playground():
                     counter += 1
             aa = ""
             for i in a.split("\n")[:-1]:
-                aa += i[::-1] + "\n"
+                aa += i + "\n"
             new_map = aa.split('\n')[:-1]
             print(new_map)
 
@@ -254,15 +254,18 @@ def usr_playground():
 
             for y in range(len(converted)):
                 for x in range(len(converted)):
-                    if converted[y][x] == 'k' and new_map[y][x] == '#':
+                    if converted[y][x] == '-' and new_map[y][x] == '#':
+                        row = list(converted[y])
+                        row[x] = '#'
+                        converted[y] = ''.join(row)
+                    elif converted[y][x] == '#':
+                        pass
+                    elif converted[y][x] not in ('#', '-') and new_map[y][x] == '#':
                         print('Вы попали!')
                         row = list(converted[y])
                         row[x] = '#'
                         converted[y] = ''.join(row)
-                    elif converted[y][x] == '-' and new_map[y][x] == '#':
-                        row = list(converted[y])
-                        row[x] = '#'
-                        converted[y] = ''.join(row)
+
             to_bd = '\n'.join(converted)
             nothing = save_map_ch(map_id, to_bd, new_dict)
             return redirect(url_for('usr_maps', login=logn))
