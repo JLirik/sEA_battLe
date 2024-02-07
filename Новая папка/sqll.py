@@ -115,6 +115,15 @@ def get_user_fields(user):
     return ret
 
 
+def save_map_ch(field_id, new_map):
+    con = sqlite3.connect('predprof.db')
+    cur = con.cursor()
+    cur.execute("""UPDATE fields SET field_info = ? WHERE field_id=?
+                            """, (new_map, field_id,))
+    con.commit()
+    return True
+
+
 # add_user_to_field('89685433354', 1, 105)
 # add_field('----k---', {1: 'govna', 2: 'bullshit'}, 'suka')
 # /user/maps?login=SeliverstovDm.
