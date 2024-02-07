@@ -115,11 +115,11 @@ def get_user_fields(user):
     return ret
 
 
-def save_map_ch(field_id, new_map):
+def save_map_ch(field_id, new_map, new_users):
     con = sqlite3.connect('predprof.db')
     cur = con.cursor()
-    cur.execute("""UPDATE fields SET field_info = ? WHERE field_id=?
-                            """, (new_map, field_id,))
+    cur.execute("""UPDATE fields SET field_info = ?, field_users = ? WHERE field_id=?
+                            """, (new_map, json.dumps(new_users), field_id,))
     con.commit()
     return True
 
