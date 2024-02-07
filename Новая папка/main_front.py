@@ -159,6 +159,29 @@ def index():
         return render_template('home.html', form=form, login=login)
 
 
+@app.route('/admin/prize_corner', methods=['GET'])
+def prize():
+    login = request.args.get('login')
+    print(1232123)
+    if not login:
+        return redirect('/')
+    else:
+        sql_ret = add_user(request.form['login'], request.form['password'],
+                           request.form['email'], f"{request.form['name']} {request.form['surname']}",
+                           is_admin)
+        if sql_ret == 0:
+            if is_admin:
+                return redirect(url_for('admin_main', login=request.form['login']))
+            return redirect(url_for('usr_maps', login=request.form['login']))
+        else:
+            if sql_ret == 'users.mail':
+                msg = 'ая почта'
+            else:
+                msg = 'ый логин'
+            flash(f'Указанн{msg} уже существует')
+            return render_template('registration_unit.html')
+
+
 @app.route('/admin/create_field', methods=['POST'])
 def get_index():
     form = SizeForm()
