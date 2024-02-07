@@ -21,6 +21,12 @@ def init_database():
                    field_name TEXT UNIQUE,
                    field_prizes TEXT DEFAULT '{}');
                     """)
+    cur.execute("""CREATE TABLE IF NOT EXISTS prizes(
+                       prize_id INTEGER PRIMARY KEY,
+                       name TEXT UNIQUE,
+                       symbol TEXT UNIQUE,
+                       file BLOB);
+                        """)
     con.commit()
     return True
 
@@ -64,6 +70,19 @@ def add_field(field, prizes, name):
         cur.execute("""INSERT INTO fields (field_info, field_name, field_prizes) 
                            VALUES (?, ?, ?)
                         """, (field, name, json.dumps(prizes),))
+        con.commit()
+    except Exception as e:
+        return str(e)[26:]
+    return 0
+
+
+def add_prize(name, smb, file):
+    con = sqlite3.connect('predprof.db')
+    cur = con.cursor()
+    try:
+        cur.execute("""INSERT INTO fields (field_info, field_name, field_prizes) 
+                               VALUES (?, ?, ?)
+                            """, (field, name, json.dumps(prizes),))
         con.commit()
     except Exception as e:
         return str(e)[26:]
