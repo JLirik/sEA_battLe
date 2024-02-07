@@ -73,16 +73,11 @@ def login_post():
 @app.route('/admin/main', methods=['GET'])
 def admin_main():
     def post_game(data):
-        print(1)
-        print(data)
-        with open('map.txt', 'w') as f:
-            a = ''
-            tmp = int(len(data) ** 0.5)
-            for i in range(0, len(data), tmp):
-                a += data[i:i + tmp] + '\n'
-            f.write(a.strip())
-        print(1)
-        print(a)
+        a = ''
+        tmp = int(len(data) ** 0.5)
+        for i in range(0, len(data), tmp):
+            a += data[i:i + tmp] + '\n'
+        add_field(a.strip(), {}, 'gg')
         return True
 
     print(555)
