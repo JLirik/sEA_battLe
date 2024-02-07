@@ -1,29 +1,81 @@
 {% extends "base.html" %}
-
+<!--http://127.0.0.1:1024/user/maps?login=SeliverstovDm.-->
 {% block content %}
-	<head><link rel="stylesheet" type="text/css" href="{{ style }}" ></head>
+	<head><link rel="stylesheet" type="text/css" href="{{ style }}" >
+		<style>
+			.button {
+				border: 1px solid black;
+				border-radius: 0px;
+				background: #FFF;
+			}
+
+			.button.clicked {
+				background-color: blue;
+			}
+		</style>
+		<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+		<script>
+			$(document).ready(function() {
+				$('.button').click(function() {
+					$(this).toggleClass('clicked');
+				});
+
+				$('#save').click(function() {
+					var data = '';
+					$('.button').each(function() {
+						if ($(this).hasClass('clicked')) {
+							data += '#';
+						} else {
+							data += '-';
+						}
+					});
+					$('input[name=data]').val(data.trim());
+				});
+			});
+		</script>
+	</head>
+{% with messages = get_flashed_messages() %}
+		 {% if messages %}
+		  <ul class="ul_cl">
+		  {% for message in messages %}
+			<li>{{ message }}</li>
+		  {% endfor %}
+		  </ul>
+		 {% endif %}
+		{% endwith %}
 
 <body>
-	<div class="container">
-  <div class="row">
-    <div class="col-8">
-		<div style="display: inline-block;">
-			{% for i in range({{ size }}) %}
-				<div>
-					{% for j in range({{ size }}) %}
-						<button class="button" type="button" value="{{ i }}-{{ j }}" style="width: 30px; height: 50px; color: white;"></button>
-					{% endfor %}
-				</div>
-			{% endfor %}
-		</div>
-		<br>
-		<button id="save" type="submit">Сохранить</button>
-
-	</div>
-    <div class="col-4">Последующие колонки продолжаются вдоль новой строки.</div>
-  </div>
-</div>
-
+<h1>Выберите, куда стрелять</h1>
+    <div class="box-1">
+		<h3>
+			Ваше колличество выстреллов: {{ shots }}
+		</h3>
+    <form method="post" action="/game/{{ size }}">
+        <input type="hidden" name="login" id="log" value="{{ login }}" />
+            <div style="display: inline-block;">
+				{% for i in range(size) %}
+					<div>
+						{% for j in range(size - 1, -1, -1) %}
+							{% if field[i][j] in ('-', 'k'): %}
+								<button name="cell" class="button" type="button" value="{{ j }}-{{ i }}" style="width: 50px; height: 50px; border-radius: 0px; border: 1px solid gray;"></button>
+							{% elif field[i][j] == '#': %}
+								<button name="cell" class="button" type="button" value="{{ j }}-{{ i }}" style="width: 50px; height: 50px; background: red; border-radius: 0px; border: 1px solid gray;" disabled></button>
+							{% endif %}
+						{% endfor %}
+					</div>
+				{% endfor %}
+			</div>
+        <br>
+    </form>
+    <div class="center-r">
+        <form action="/user/playground" method="get" >
+            <input type="hidden" name="login" id="log" value="{{ login }}" />
+			<input type="hidden" name="map_id" id="log2" value="{{ map_id }}" />
+            <input type="hidden" name="data" id="log1" />
+            <button id="save" class="button1" type="submit" style="width:135px;height:45px;cursor:pointer">Сохранить</button>
+        </form>
+    </div>
+    </div>
 </body>
 
 {% endblock %}
