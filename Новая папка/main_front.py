@@ -10,6 +10,7 @@ from wtforms.validators import DataRequired
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'predpof_code_crusaders'
 init_database()
+files = ['jpg', 'png', 'jpeg']
 
 class SizeForm(FlaskForm):
     size = IntegerField('Размер', validators=[DataRequired()])
@@ -79,9 +80,7 @@ def admin_main():
         tmp = int(len(data) ** 0.5)
         for i in range(0, len(data), tmp):
             a += data[i:i + tmp] + '\n'
-        print(a, 124353)
-        add_field(a.strip(), {}, 'Карта 228')
-        print(123)
+        add_field(a.strip(), {}, 'Карта 105')
         return True
 
     def check(map_1):
@@ -108,18 +107,12 @@ def admin_main():
                         return True
         return False
 
-    def add_user(name, field, number):
-        add_user_to_field(name, field, number)
 
-    print(555)
     name = request.args.get('name')
     field = request.args.get('field')
     data = request.args.get('data')
     login = request.args.get('login')
     number = request.args.get('tentacles')
-    print(name, 234578)
-    print(data, field)
-    print(number, 'wqewqe')
     if not login:
         return redirect('/')
     if data:
@@ -148,7 +141,7 @@ def admin_main():
         name = request.args.get('name')
         field = request.args.get('field')
         number = request.args.get('tentacles')
-        add_user(name, field, number)
+        add_user_to_field(name, field, number)
         return redirect(url_for('admin_main', login=login))
     else:
         map_lst = get_fields()
@@ -201,27 +194,35 @@ def index():
         return render_template('home.html', form=form, login=login)
 
 
-@app.route('/admin/prize_corner', methods=['GET'])
+@app.route('/admin/prize_corner', methods=['GET', 'POST'])
 def prize():
     login = request.args.get('login')
-    print(1232123)
     if not login:
         return redirect('/')
     else:
-        sql_ret = add_user(request.form['login'], request.form['password'],
-                           request.form['email'], f"{request.form['name']} {request.form['surname']}",
-                           is_admin)
-        if sql_ret == 0:
-            if is_admin:
-                return redirect(url_for('admin_main', login=request.form['login']))
-            return redirect(url_for('usr_maps', login=request.form['login']))
+        print(1)
+        if request.method == 'GET':
+            return render_template('prize_create.html', login=login)
+        name = request.form['name']
+        smb = request.form['symbol']
+        file = request.files['icon']
+        about = request.form['about']
+        print(5, file)
+        if file.filename.split('.')[-1] not in files:
+            flash('Недопустимый формат файла')
+            return render_template('prize_create.html', login=login)
+        sql_ret = add_prize(name, smb, about)
+        print(sql_ret, 1)
+        if not sql_ret:
+            file.save(f'C:\\Users\\User\AppData\\Roaming\\{smb}.{file.filename.split(".")[-1]}')
+            return redirect(url_for('admin_main', login=login))
         else:
-            if sql_ret == 'users.mail':
-                msg = 'ая почта'
+            if sql_ret.strip() == 'prizes.symbol':
+                txt = 'Символ'
             else:
-                msg = 'ый логин'
-            flash(f'Указанн{msg} уже существует')
-            return render_template('registration_unit.html')
+                txt = 'Имя'
+            flash(f'{txt} уже существует')
+            return render_template('prize_create.html', login=login)
 
 
 @app.route('/admin/create_field', methods=['POST'])
@@ -315,15 +316,16 @@ def usr_playground():
             for i in a.split("\n")[:-1]:
                 aa += i + "\n"
             new_map = aa.split('\n')[:-1]
-            print(new_map)
+            # print(new_map)
 
             local_map = get_field(map_id)
             converted = local_map[1].split('\n')
-            print(converted)
+            # print(converted)
             f = 0
             counter = data.count('#')
             flash(f'Выстрелов вы совершили: {counter}')
             flash('Среди которых:')
+            won_prizes = []
             for y in range(len(converted)):
                 for x in range(len(converted)):
                     if converted[y][x] == '-' and new_map[y][x] == '#':
@@ -333,16 +335,21 @@ def usr_playground():
                     elif converted[y][x] == '#':
                         pass
                     elif converted[y][x] not in ('#', '-') and new_map[y][x] == '#':
-                        flash(f'Вы выйграли ~Дальше надо из БД достать приз~')
-                        print('Вы попали!')
+                        prize = get_prize(converted[y][x])
+                        # print(prize)
+                        flash(f'Вы выиграли {prize[1]}')
+                        # print('Вы попали!')
+                        won_prizes.append(prize[2])
                         f = 1
                         row = list(converted[y])
                         row[x] = '#'
                         converted[y] = ''.join(row)
             if f == 0:
                 flash('Вы ни разу не попали')
+            else:
+                add_prizes_to_user(logn, won_prizes)
             to_bd = '\n'.join(converted)
-            nothing = save_map_ch(map_id, to_bd, new_dict)
+            save_map_ch(map_id, to_bd, new_dict)
             return redirect(url_for('usr_maps', login=logn))
 
 

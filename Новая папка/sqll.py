@@ -11,6 +11,7 @@ def init_database():
                    password TEXT,
                    mail TEXT UNIQUE,
                    name TEXT,
+                   prizes TEXT DEFAULT ', ',
                    is_admin INTEGER DEFAULT 0,
                    avaliable_fields TEXT DEFAULT '');
                 """)
@@ -66,13 +67,10 @@ def adm_chck(login):
 def add_field(field, prizes, name):
     con = sqlite3.connect('predprof.db')
     cur = con.cursor()
-    try:
-        cur.execute("""INSERT INTO fields (field_info, field_name, field_prizes) 
-                           VALUES (?, ?, ?)
-                        """, (field, name, json.dumps(prizes),))
-        con.commit()
-    except Exception as e:
-        return str(e)[26:]
+    cur.execute("""INSERT INTO fields (field_info, field_name, field_prizes) 
+                       VALUES (?, ?, ?)
+                    """, (field, name, json.dumps(prizes),))
+    con.commit()
     return 0
 
 
@@ -85,6 +83,18 @@ def add_prize(name, smb, about):
     except Exception as e:
         return str(e)[26:]
     return 0
+
+
+def add_prizes_to_user(login, prizes):
+    con = sqlite3.connect('predprof.db')
+    cur = con.cursor()
+    prs = cur.execute("""SELECT prizes FROM users
+                               WHERE login=?""", (login,)).fetchone()[0]
+    prs = prs.split(', ')
+    prs.extend(prizes)
+    cur.execute("""UPDATE users SET prizes = ? WHERE login=? """, (', '.join(prs), login,))
+    con.commit()
+    return True
 
 
 def add_user_to_field(login, field_id, shots):
@@ -110,6 +120,27 @@ def get_fields():
     cur = con.cursor()
     fields = cur.execute("""SELECT * FROM fields""").fetchall()
     return fields
+
+
+def get_prizes():
+    con = sqlite3.connect('predprof.db')
+    cur = con.cursor()
+    pr = cur.execute("""SELECT * FROM prizes""").fetchall()
+    return pr
+
+
+def get_prize(smb):
+    con = sqlite3.connect('predprof.db')
+    cur = con.cursor()
+    pr = cur.execute("""SELECT * FROM prizes WHERE symbol=?""", (smb,)).fetchall()[0]
+    return pr
+
+
+def get_user_prizes(login):
+    con = sqlite3.connect('predprof.db')
+    cur = con.cursor()
+    pr = cur.execute("""SELECT prizes FROM users WHERE login=?""", (login,)).fetchall()
+    return pr
 
 
 def get_field(field_id):
