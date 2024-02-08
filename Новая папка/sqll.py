@@ -25,7 +25,7 @@ def init_database():
                        prize_id INTEGER PRIMARY KEY,
                        name TEXT UNIQUE,
                        symbol TEXT UNIQUE,
-                       file BLOB);
+                       about TEXT);
                         """)
     con.commit()
     return True
@@ -76,13 +76,11 @@ def add_field(field, prizes, name):
     return 0
 
 
-def add_prize(name, smb, file):
+def add_prize(name, smb, about):
     con = sqlite3.connect('predprof.db')
     cur = con.cursor()
     try:
-        cur.execute("""INSERT INTO fields (field_info, field_name, field_prizes) 
-                               VALUES (?, ?, ?)
-                            """, (field, name, json.dumps(prizes),))
+        cur.execute("""INSERT INTO prizes (name, symbol, about) VALUES (?, ?, ?)""", (name, smb, about,))
         con.commit()
     except Exception as e:
         return str(e)[26:]
