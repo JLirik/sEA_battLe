@@ -41,8 +41,9 @@
             {%endfor%}
         </div>
         <div style="display: flex; align-items: flex-end; margin: 0px;">
-            <form action="/maps/{{ data[i[1]] }}?login={{ login }}" method="get">
-                <button name="map" type="submit" value="{{ i[0] }}" class="button1" style="width:135px;height:45px;">Добавить пользователч</button>
+            <form action="/admin/add_users" method="get">
+                <input name="login" type="hidden" value="{{ login }}" />
+                <button name="map" type="submit" value="{{ i[3] }}" class="button1" style="width:135px;height:45px;">Добавить пользователч</button>
             </form>
             <button name="map" type="submit" value="{{ i[0] }}" class="button1" style="width:135px;height:45px;">Редактировать</button>
         </div>
