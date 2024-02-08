@@ -98,7 +98,7 @@ def add_user_to_field(login, field_id, shots):
     users = cur.execute("""SELECT field_users FROM fields
                                WHERE field_id=?""", (field_id,)).fetchone()[0]
     a = json.loads(users)
-    a[login] = shots
+    a[login] = int(shots)
     cur.execute("""UPDATE fields SET field_users = ? WHERE field_id=?
                         """, (json.dumps(a), field_id,))
     con.commit()

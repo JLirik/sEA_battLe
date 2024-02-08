@@ -5,6 +5,16 @@
         <link rel="stylesheet" type="text/css" href="../static/css/css_for_reg.css">
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Varela Round">
 </head>
+{% with messages = get_flashed_messages() %}
+		 {% if messages %}
+		  <ul class="ul_cl">
+		  {% for message in messages %}
+			<li>{{ message }}</li>
+		  {% endfor %}
+		  </ul>
+		 {% endif %}
+		{% endwith %}
+
 <body>
     <h1>Укажите размер поля</h1>
     <div class="box-1">

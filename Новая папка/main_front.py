@@ -79,10 +79,34 @@ def admin_main():
         tmp = int(len(data) ** 0.5)
         for i in range(0, len(data), tmp):
             a += data[i:i + tmp] + '\n'
-        print(a)
-        add_field(a.strip(), {}, 'gg')
+        print(a, 124353)
+        add_field(a.strip(), {}, 'Карта 228')
         print(123)
         return True
+
+    def check(map_1):
+        n = len(map_1)
+        for y in range(n):
+            for x in range(n):
+                if map_1[y][x] != "-":
+                    if x < n - 1:
+                        if map_1[y][x + 1] != "-":
+                            return True
+                        if y < n - 1:
+                            if map_1[y + 1][x] != "-":
+                                return True
+                            if map_1[y + 1][x + 1] != "-":
+                                return True
+                        if y > 0:
+                            if map_1[y - 1][x] != "-":
+                                return True
+                            if map_1[y - 1][x + 1] != "-":
+                                return True
+                    elif y < n - 1 and map_1[y + 1][x] != "-":
+                        return True
+                    elif y > 0 and map_1[y - 1][x] != "-":
+                        return True
+        return False
 
     def add_user(name, field, number):
         add_user_to_field(name, field, number)
@@ -94,14 +118,32 @@ def admin_main():
     login = request.args.get('login')
     number = request.args.get('tentacles')
     print(name, 234578)
-    print(data, 456787656789)
+    print(data, field)
     print(number, 'wqewqe')
     if not login:
         return redirect('/')
     if data:
-        data = request.args.get('data')
-        post_game(data)
-        return redirect(url_for('admin_main', login=login))
+        data = request.args.get('data').replace(' ', '-')
+
+        gift_lst = []
+        b = ''
+        tmp = int(len(data) ** 0.5)
+        for i in range(0, len(data), tmp):
+            b += data[i:i + tmp] + '\n'
+        size = len(b.split('\n')[:-1])
+
+        if check(b.split('\n')[:-1]):
+            flash('Нельзя ставить два корабля рядом')
+            return render_template('index.html', style=url_for('static', filename='css/css_for_reg.css'),
+                                   gifts=gift_lst, size=size, login=login)
+
+        if data.count('-') != len(data):
+            post_game(data)
+            return redirect(url_for('admin_main', login=login))
+
+        flash('Нельзя создать карту без кораблей!')
+
+        return render_template('index.html', style=url_for('static', filename='css/css_for_reg.css'), gifts=gift_lst, size=size, login=login)
     if name and field:
         name = request.args.get('name')
         field = request.args.get('field')
@@ -187,8 +229,12 @@ def get_index():
     form = SizeForm()
     login = request.args.get('login')
     print(login, 2)
+
     if form.validate_on_submit():
         size = form.size.data
+        if not (2 <= size <= 15):
+            flash('Размер поля должен быть от 2 до 15 клеток!')
+            return render_template('home.html', form=form, login=login)
         return redirect(url_for('game', size=size, login=login))
 
 
@@ -207,8 +253,8 @@ def game(size):
     print(login, 123)
     if not login:
         return redirect('/')
-    return render_template('index.html', style=url_for('static', filename='css/css_for_reg.css'), size=size, login=login)
-
+    gift_lst = []
+    return render_template('index.html', style=url_for('static', filename='css/css_for_reg.css'), gifts=gift_lst, size=size, login=login)
 
 
 @app.route('/user/maps', methods=['GET'])
@@ -274,7 +320,10 @@ def usr_playground():
             local_map = get_field(map_id)
             converted = local_map[1].split('\n')
             print(converted)
-
+            f = 0
+            counter = data.count('#')
+            flash(f'Выстрелов вы совершили: {counter}')
+            flash('Среди которых:')
             for y in range(len(converted)):
                 for x in range(len(converted)):
                     if converted[y][x] == '-' and new_map[y][x] == '#':
@@ -284,11 +333,14 @@ def usr_playground():
                     elif converted[y][x] == '#':
                         pass
                     elif converted[y][x] not in ('#', '-') and new_map[y][x] == '#':
+                        flash(f'Вы выйграли ~Дальше надо из БД достать приз~')
                         print('Вы попали!')
+                        f = 1
                         row = list(converted[y])
                         row[x] = '#'
                         converted[y] = ''.join(row)
-
+            if f == 0:
+                flash('Вы ни разу не попали')
             to_bd = '\n'.join(converted)
             nothing = save_map_ch(map_id, to_bd, new_dict)
             return redirect(url_for('usr_maps', login=logn))
