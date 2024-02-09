@@ -20,6 +20,10 @@
             <input type="hidden" name="login" id="log" value="{{ login }}" />
             <button class="button1" style="width:135px;height:45px;cursor:pointer">Создать приз</button>
         </form>
+	<form action="/admin/prizes_view" method="get">
+            <input type="hidden" name="login" id="log" value="{{ login }}" />
+            <button class="button1" style="width:200px;height:45px;cursor:pointer">Посмотреть призы</button>
+        </form>
     </div>
     <div class="center-n">
         <h3>Всего полей: {{ data[-1][0] }}</h3>
