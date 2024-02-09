@@ -67,11 +67,14 @@ def adm_chck(login):
 def add_field(field, prizes, name):
     con = sqlite3.connect('predprof.db')
     cur = con.cursor()
-    cur.execute("""INSERT INTO fields (field_info, field_name, field_prizes) 
-                       VALUES (?, ?, ?)
-                    """, (field, name, json.dumps(prizes),))
-    con.commit()
-    return 0
+    try:
+        cur.execute("""INSERT INTO fields (field_info, field_name, field_prizes) 
+                           VALUES (?, ?, ?)
+                        """, (field, name, json.dumps(prizes),))
+        con.commit()
+    except Exception as e:
+        return False
+    return True
 
 
 def add_prize(name, smb, about):
@@ -163,23 +166,23 @@ def get_user_fields(user):
     return ret
 
 
-def redact_fields(field_id, field_info, name):
-    con = sqlite3.connect('predprof.db')
-    cur = con.cursor()
-    field = get_field(field_id)
-    if '#' in field[1]:
-        return False
-    cur.execute("""UPDATE fields SET name = ?, field_info = ? WHERE field_id=? """, (name, field_info, field_id,))
-    con.commit()
-    return True
-
-
 def save_map_ch(field_id, new_map, new_users):
     con = sqlite3.connect('predprof.db')
     cur = con.cursor()
     cur.execute("""UPDATE fields SET field_info = ?, field_users = ? WHERE field_id=?
                             """, (new_map, json.dumps(new_users), field_id,))
     con.commit()
+    return True
+
+
+def redact_fields(field_id, field_info, name):
+    con = sqlite3.connect('predprof.db')
+    cur = con.cursor()
+    try:
+        cur.execute("""UPDATE fields SET field_name = ?, field_info = ? WHERE field_id=? """, (name, field_info, field_id,))
+        con.commit()
+    except Exception as e:
+        return False
     return True
 
 
