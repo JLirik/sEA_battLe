@@ -172,6 +172,38 @@ def save_map_ch(field_id, new_map, new_users):
     return True
 
 
+def delete_map(field_id):
+    con = sqlite3.connect('predprof.db')
+    cur = con.cursor()
+    field = get_field(field_id)
+    if '#' in field[1]:
+        return False
+    cur.execute("""DELETE FROM fields WHERE field_id=? 
+                            """, (field_id,))
+    a = get_users()
+    for j in a:
+        if str(field_id) in j[6]:
+            c = j[6][2:].split(', ')
+            d = ''
+            for i in c:
+                if i != str(field_id):
+                    d += ', ' + i
+            j2 = j
+            j = tuple(
+                item for item in j if item != j[1]
+            )
+            j = list(j)
+            j.insert(6, d)
+            j1 = tuple(j)
+            a.insert(a.index(j2), j1)
+            a.remove(j2)
+    for i in a:
+        cur.execute("""UPDATE users SET avaliable_fields = ? WHERE userid=?
+                                    """, (i[6], i[0],))
+    con.commit()
+    return True
+
+
 def get_users():
     con = sqlite3.connect('predprof.db')
     cur = con.cursor()
