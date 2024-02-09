@@ -74,6 +74,9 @@
             <input type="text" id="tentacles1" placeholder="Введите название поля" name="tentacles1" style="width:135;height:30px;" />
             <button id="save" class="button1 saver" type="submit" style="width:135px;height:45px;cursor:pointer">Сохранить</button>
         </form>
+	<form action="/admin/main" method="get">
+        	<button name="login" type="submit" value="{{ login }}" class="button1" style="width:135px;height:45px;">Вернуться</button>
+    	</form>
     </div>
     </div>
 <script src="{{url_for('static', filename='script1.js')}}"></script>
