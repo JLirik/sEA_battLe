@@ -75,35 +75,41 @@ def login_post():
 
 @app.route('/admin/main', methods=['GET'])
 def admin_main():
-    def post_game(data):
+    def post_game(data, name):
         a = ''
         tmp = int(len(data) ** 0.5)
         for i in range(0, len(data), tmp):
             a += data[i:i + tmp] + '\n'
-        add_field(a.strip(), {}, 'Карта 105')
+        tupo = add_field(a.strip(), {}, name)
+        if not tupo:
+            flash('Карта с таким названием уже сущетсвует!')
+            flash('Дайте карте уникальное имя.')
+            return render_template('index.html', style=url_for('static', filename='css/css_for_reg.css'),
+                                   gifts=gift_lst, size=size, login=login)
+
         return True
 
     def check(map_1):
         n = len(map_1)
         for y in range(n):
             for x in range(n):
-                if map_1[y][x] != "-":
+                if map_1[y][x] not in ("-", '#'):
                     if x < n - 1:
-                        if map_1[y][x + 1] != "-":
+                        if map_1[y][x + 1] not in ("-", '#'):
                             return True
                         if y < n - 1:
-                            if map_1[y + 1][x] != "-":
+                            if map_1[y + 1][x] not in ("-", '#'):
                                 return True
-                            if map_1[y + 1][x + 1] != "-":
+                            if map_1[y + 1][x + 1] not in ("-", '#'):
                                 return True
                         if y > 0:
-                            if map_1[y - 1][x] != "-":
+                            if map_1[y - 1][x] not in ("-", '#'):
                                 return True
-                            if map_1[y - 1][x + 1] != "-":
+                            if map_1[y - 1][x + 1] not in ("-", '#'):
                                 return True
-                    elif y < n - 1 and map_1[y + 1][x] != "-":
+                    elif y < n - 1 and map_1[y + 1][x] not in ("-", '#'):
                         return True
-                    elif y > 0 and map_1[y - 1][x] != "-":
+                    elif y > 0 and map_1[y - 1][x] not in ("-", '#'):
                         return True
         return False
 
@@ -113,12 +119,15 @@ def admin_main():
     data = request.args.get('data')
     login = request.args.get('login')
     number = request.args.get('tentacles')
+    text = request.args.get('tentacles1')
+    id_f = request.args.get('id_file')
+
     if not login:
         return redirect('/')
     if data:
         data = request.args.get('data').replace(' ', '-')
 
-        gift_lst = []
+        gift_lst = get_prizes()
         b = ''
         tmp = int(len(data) ** 0.5)
         for i in range(0, len(data), tmp):
@@ -127,15 +136,83 @@ def admin_main():
 
         if check(b.split('\n')[:-1]):
             flash('Нельзя ставить два корабля рядом')
+            if id_f:
+                map_lst = get_field(id_f)
+                karta = map_lst[1].split('\n')
+
+                not_to_red = False
+                if '#' in map_lst[1]:
+                    not_to_red = True
+                return render_template('redact_field.html', data=karta, red=not_to_red, f_name=map_lst[3],
+                                       id_f=map_lst[0], login=login, size=len(karta))
+
+            return render_template('index.html', style=url_for('static', filename='css/css_for_reg.css'),
+                                   gifts=gift_lst, size=size, login=login)
+
+        if text == '':
+            flash('Назовите поле!')
+            if id_f:
+                map_lst = get_field(id_f)
+                karta = map_lst[1].split('\n')
+
+                not_to_red = False
+                if '#' in map_lst[1]:
+                    not_to_red = True
+                return render_template('redact_field.html', data=karta, red=not_to_red, f_name=map_lst[3],
+                                       id_f=map_lst[0], login=login, size=len(karta))
             return render_template('index.html', style=url_for('static', filename='css/css_for_reg.css'),
                                    gifts=gift_lst, size=size, login=login)
 
         if data.count('-') != len(data):
-            post_game(data)
+            are_gifts = [e[2] for e in get_prizes()]
+            print(are_gifts)
+
+            for e in data:
+                if e not in are_gifts and e not in ('-', '#'):
+                    flash(f'Не существует приза {e}')
+                    if id_f:
+                        map_lst = get_field(id_f)
+                        karta = map_lst[1].split('\n')
+
+                        not_to_red = False
+                        if '#' in map_lst[1]:
+                            not_to_red = True
+                        return render_template('redact_field.html', data=karta, red=not_to_red, f_name=map_lst[3],
+                                               id_f=map_lst[0], login=login, size=len(karta))
+                    return render_template('index.html', style=url_for('static', filename='css/css_for_reg.css'),
+                                           gifts=gift_lst, size=size, login=login)
+            if id_f:
+                a = ''
+                tmp = int(len(data) ** 0.5)
+                for i in range(0, len(data), tmp):
+                    a += data[i:i + tmp] + '\n'
+                par = redact_fields(id_f, a.strip(), text)
+                print(str(par))
+                if not par:
+                    flash('Карта с таким названием уже сущетсвует!')
+                    flash('Дайте карте уникальное имя.')
+                    map_lst = get_field(id_f)
+                    karta = map_lst[1].split('\n')
+
+                    not_to_red = False
+                    if '#' in map_lst[1]:
+                        not_to_red = True
+                    return render_template('redact_field.html', data=karta, red=not_to_red, f_name=map_lst[3],
+                                           id_f=map_lst[0], login=login, size=len(karta))
+            else:
+                post_game(data, text)
             return redirect(url_for('admin_main', login=login))
 
         flash('Нельзя создать карту без кораблей!')
+        if id_f:
+            map_lst = get_field(id_f)
+            karta = map_lst[1].split('\n')
 
+            not_to_red = False
+            if '#' in map_lst[1]:
+                not_to_red = True
+            return render_template('redact_field.html', data=karta, red=not_to_red, f_name=map_lst[3],
+                                   id_f=map_lst[0], login=login, size=len(karta))
         return render_template('index.html', style=url_for('static', filename='css/css_for_reg.css'), gifts=gift_lst, size=size, login=login)
     if name and field:
         name = request.args.get('name')
@@ -171,17 +248,34 @@ def admin_main():
 
 @app.route('/admin/add_users', methods=['GET', 'POST'])
 def add_users():
-    login =  request.args.get('login')
+    login = request.args.get('login')
     a = request.args.get('map')
-    print(a)
     users_list = get_users()
-    print(users_list)
     map_lst = get_fields()
-    print(map_lst)
     if not login:
         return redirect('/')
     else:
         return render_template('add_users.html', data=users_list, maps=map_lst, name=a, login=login)
+
+
+@app.route('/admin/redact_field', methods=['GET', 'POST'])
+def redactor():
+    login = request.args.get('login')
+    a = request.args.get('map')
+    map_lst = get_field(a)
+    print(map_lst, a)
+    karta = map_lst[1].split('\n')
+    gift_lst = get_prizes()
+
+    not_to_red = False
+    if '#' in map_lst[1]:
+        not_to_red = True
+
+    if not login:
+        return redirect('/')
+    else:
+        return render_template('redact_field.html', gifts=gift_lst, data=karta, red=not_to_red, f_name=map_lst[3], id_f=map_lst[0], login=login, size=len(karta))
+
 
 @app.route('/admin/create_field', methods=['GET'])
 def index():
@@ -226,6 +320,17 @@ def prize():
             return render_template('prize_create.html', login=login)
 
 
+@app.route('/admin/prizes_view', methods=['GET', 'POST'])
+def prizes_view_admin():
+    login = request.args.get('login')
+    a = get_prizes()
+    print(a)
+    if not login:
+        return redirect('/')
+    else:
+        return render_template('prizes_view_admin.html', login=login, data=a)
+
+
 @app.route('/admin/create_field', methods=['POST'])
 def get_index():
     form = SizeForm()
@@ -255,19 +360,8 @@ def game(size):
     print(login, 123)
     if not login:
         return redirect('/')
-    gift_lst = []
+    gift_lst = get_prizes()
     return render_template('index.html', style=url_for('static', filename='css/css_for_reg.css'), gifts=gift_lst, size=size, login=login)
-
-
-@app.route('/admin/prizes_view', methods=['GET', 'POST'])
-def prizes_view_admin():
-    login = request.args.get('login')
-    a = get_prizes()
-    print(a)
-    if not login:
-        return redirect('/')
-    else:
-        return render_template('prizes_view_admin.html', login=login, data=a)
 
 
 @app.route('/user/maps', methods=['GET'])
@@ -284,7 +378,7 @@ def usr_maps():
     q = []
     for i in a:
         if i != '':
-           q.append(i)
+            q.append(i)
     print(q)
     for i in users_list:
         if i[1] != login:
