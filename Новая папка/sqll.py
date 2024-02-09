@@ -193,8 +193,8 @@ def delete_map(field_id):
                             """, (field_id,))
     a = get_users()
     for j in a:
-        if str(field_id) in j[6]:
-            c = j[6][2:].split(', ')
+        if str(field_id) in j[7]:
+            c = j[7][2:].split(', ')
             d = ''
             for i in c:
                 if i != str(field_id):
@@ -204,13 +204,13 @@ def delete_map(field_id):
                 item for item in j if item != j[1]
             )
             j = list(j)
-            j.insert(6, d)
+            j.insert(7, d)
             j1 = tuple(j)
             a.insert(a.index(j2), j1)
             a.remove(j2)
     for i in a:
         cur.execute("""UPDATE users SET avaliable_fields = ? WHERE userid=?
-                                    """, (i[6], i[0],))
+                                    """, (i[7], i[0],))
     con.commit()
     return True
 
