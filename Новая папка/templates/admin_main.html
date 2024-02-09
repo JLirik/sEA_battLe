@@ -10,7 +10,11 @@
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Varela Round">
 </head>
 <body>
-    <h1>Добро пожаловать на страницу админа, {{ users[0][4]}}</h1>
+    {% for i in users %}
+        {% if login == i[1]%}
+            <h1>Добро пожаловать на страницу админа, {{ i[4] }}</h1>
+	{%endif%}
+    {%endfor%}
     <div class="center-r">
         <form action="/admin/create_field" method="get">
             <input type="hidden" name="login" id="log" value="{{ login }}" />
@@ -47,7 +51,11 @@
         <div style="display: flex; align-items: flex-end; margin: 0px;">
             <form action="/admin/add_users" method="get">
                 <input name="login" type="hidden" value="{{ login }}" />
-                <button name="map" type="submit" value="{{ i[3] }}" class="button1" style="width:135px;height:45px;">Добавить пользователч</button>
+                <button name="map" type="submit" value="{{ i[3] }}" class="button1" style="width:135px;height:45px;">Добавить пользователя</button>
+            </form>
+	    <form action="/admin/main" method="get">
+                <input name="login" type="hidden" value="{{ login }}" />
+                <button name="map1" type="submit" value="{{ i[0] }}" class="button1" style="width:135px;height:45px;">Удаление</button>
             </form>
             <form action="/admin/redact_field" method="get">
                 <input name="login" type="hidden" value="{{ login }}" />
