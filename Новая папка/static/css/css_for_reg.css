@@ -8,6 +8,11 @@ body {
 	display: none;
 }
 
+.my-image {
+    width: 500px;
+    height: auto;
+  }
+
 .box-1 {
   width: 60%;
   background-color: #99CCCC;
