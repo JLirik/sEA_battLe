@@ -13,6 +13,12 @@
     {% endif %}
 {% endwith %}
 
+    {% for i in users %}
+        {% if login == i[1]%}
+            <h1>Добро пожаловать на страницу пользователя, {{ i[4] }}</h1>
+        {%endif%}
+    {%endfor%}
+
 <div class="center-r">
         <form action="/user/prizes_view" method="get">
             <input type="hidden" name="login" id="log" value="{{ login }}" />
