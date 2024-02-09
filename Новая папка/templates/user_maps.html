@@ -13,12 +13,6 @@
     {% endif %}
 {% endwith %}
 
-<h1>Ваши карты</h1>
-<div style="width: 30%; display: flex; justify-content: center;">
-    <input placeholder="Карта" style="height: 45px; margin: 0px 10px;" name="login">
-    <button class="button1" style="width:135px;height:45px;">Найти</button>
-</div>
-
 <div class="center-r">
         <form action="/user/prizes_view" method="get">
             <input type="hidden" name="login" id="log" value="{{ login }}" />
