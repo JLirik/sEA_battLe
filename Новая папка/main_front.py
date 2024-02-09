@@ -214,7 +214,8 @@ def prize():
         sql_ret = add_prize(name, smb, about)
         print(sql_ret, 1)
         if not sql_ret:
-            file.save(f'C:\\Users\\User\AppData\\Roaming\\{smb}.{file.filename.split(".")[-1]}')
+            file.save(f'.\\static\\media\\{smb}.{file.filename.split(".")[-1]}')
+            # "C:\Users\peter\AppData\Roaming"
             return redirect(url_for('admin_main', login=login))
         else:
             if sql_ret.strip() == 'prizes.symbol':
@@ -258,20 +259,46 @@ def game(size):
     return render_template('index.html', style=url_for('static', filename='css/css_for_reg.css'), gifts=gift_lst, size=size, login=login)
 
 
+@app.route('/admin/prizes_view', methods=['GET', 'POST'])
+def prizes_view_admin():
+    login = request.args.get('login')
+    a = get_prizes()
+    print(a)
+    if not login:
+        return redirect('/')
+    else:
+        return render_template('prizes_view_admin.html', login=login, data=a)
+
+
 @app.route('/user/maps', methods=['GET'])
 def usr_maps():
     login = request.args.get('login')
     if not login:
         return redirect('/')
     maps_lst = get_user_fields(login)  # Потом будет получать из БД.
+    users_list = get_users()
+    prizes = get_user_prizes(login)
+    print(prizes)
+    a = prizes[0][0].split(', ')
+    print(a)
+    q = []
+    for i in a:
+        if i != '':
+           q.append(i)
+    print(q)
+    for i in users_list:
+        if i[1] != login:
+            users_list.remove(i)
     # Формат: Номер карты(value), Название карты, Колличесво выстрелов
-    return render_template('user_maps.html', data=maps_lst, style=url_for('static', filename='css/css_for_reg.css'), login=login)
+    return render_template('user_maps.html', data=maps_lst, style=url_for('static', filename='css/css_for_reg.css'), login=login, users=users_list, prizes=q)
 
 
 @app.route('/user/maps', methods=['POST'])
 def get_usr_maps():
     map_id = request.form['map']
     login = request.form['login']
+    map_lst = get_fields()
+    print(map_lst)
     return redirect(url_for('usr_playground', login=login, map_id=map_id))
 
 
@@ -351,6 +378,20 @@ def usr_playground():
             to_bd = '\n'.join(converted)
             save_map_ch(map_id, to_bd, new_dict)
             return redirect(url_for('usr_maps', login=logn))
+
+
+@app.route('/user/prizes_view', methods=['GET', 'POST'])
+def prizes_view_user():
+    login = request.args.get('login')
+    prizes = request.args.get('prizes')
+    print(1)
+    print(prizes)
+    a = get_prizes()
+    print(a)
+    if not login:
+        return redirect('/')
+    else:
+        return render_template('prizes_view_user.html', login=login, prizes=prizes, data=a)
 
 
 if __name__ == '__main__':
