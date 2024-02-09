@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+{% extends "base.html" %}
+
+{% block content %}
+<head>
+    <meta charset="UTF-8">
+    <title>Страница просмтра призов</title>
+        <link rel="stylesheet" type="text/css" href="../static/css/css_for_reg.css">
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Varela Round">
+</head>
+<body>
+<div >
+    <h2>Страница просмотра призов</h2>
+    {% for i in data%}
+        {% for j in prizes%}
+            {%if i[2] == j%}
+        <div class="box-1">
+                    <h5>Приз - {{ i[1] }}</h5>
+                    <img
+                      class="my-image"
+                      src="../static/media/{{ i[2] }}.png"
+                    />
+                    <h5>Символ - {{ i[2] }}</h5>
+                    <h5>Описание: {{ i[3] }}</h5>
+                </div>
+            {%endif%}
+        {% endfor %}
+    {% endfor %}
+    <form action="/user/maps" method="get">
+        <button name="login" type="submit" value="{{ login }}" class="button1" style="width:270px;height:45px;">Вернуться</button>
+    </form>
+</div>
+</body>
+</html>
+{% endblock %}
