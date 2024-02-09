@@ -12,16 +12,36 @@
 <body>
 <div >
     <h2>Страница просмотра призов</h2>
+    <form enctype=multipart/form-data method="post">
+        <input type="text" id="tentacles1" value="{{ filter }}" placeholder="Введите название приза" name="filter" style="width:135;height:30px;" />
+        <button class="button1" name="find">Найти</button>
+    </form>
+
+
     {% for i in data%}
-        <div class="box-1">
-                    <h5>Приз - {{ i[1] }}</h5>
-                    <img
-                      class="my-image"
-                      src="../static/media/{{ i[2] }}.png"
-                    />
-                    <h5>Символ - {{ i[2] }}</h5>
-                    <h5>Описание: {{ i[3] }}</h5>
+        {% if filter in i[1] or filter in i[3]: %}
+            <div class="box-1">
+                <h5>Приз - {{ i[1] }}</h5>
+                <img
+                  class="my-image"
+                  src="../static/media/{{ i[2] }}.png"
+                />
+                <h5>Символ - {{ i[2] }}</h5>
+                <h5>Описание: {{ i[3] }}</h5>
+                <div>
+                    <form action="/admin/redact" method="get">
+                        <input name="login" type="hidden" value="{{ login }}" />
+                        <button name="qup" type="submit" value="{{ i[2] }}" class="button1" style="width:135px;height:45px;">Изменить</button>
+                    </form>
+
+                    <form action="/admin/del_prize" method="get">
+                        <input name="login" type="hidden" value="{{ login }}" />
+                        <button name="deleterer" value="{{ i[2] }}" class="button1" style="width:135px;height:45px;">Удалить</button>
+                    </form>
                 </div>
+            </div>
+
+        {% endif %}
     {% endfor %}
     <form action="/admin/main" method="get">
         <button name="login" type="submit" value="{{ login }}" class="button1" style="width:270px;height:45px;">Вернуться</button>

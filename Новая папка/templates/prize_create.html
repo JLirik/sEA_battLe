@@ -16,14 +16,18 @@
             <form enctype=multipart/form-data method="post">
                 <input type="hidden" name="login" id="log" value="{{ login }}" />
                 <h1>Введите название приза</h1>
-                <input name="name" id="log3" required/>
+                <input name="name" id="log3" required value="{{ name }}"/>
                 <h1>Введите символ приза</h1>
-                <input name="symbol" id="log4" maxlength="1" required/>
+                <input name="symbol" id="log4" maxlength="1" required value="{{ symb }}"/>
                 <h1>Добавьте картинку приза</h1>
                 <input name="icon" accept="image/" id="log5" type="file" required/>
                 <h1>Добавьте описание приза</h1>
-                <input name="about" id="log5" required/>
-                <button name="sab" class="button1" style="width:135px;height:45px;">Отправить</button>
+                <input name="about" id="log5" required value="{{ desc }}"/>
+                {% if id_f: %}
+                    <button name="rrp" value="{{ id_f }}" class="button1" style="width:135px;height:45px;">Отправить</button>
+                {% else: %}
+                    <button name="sab" class="button1" style="width:135px;height:45px;">Отправить</button>
+                {% endif %}
             </form>
         </div>
     </div></div>

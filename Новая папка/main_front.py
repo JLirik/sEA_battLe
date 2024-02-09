@@ -113,8 +113,8 @@ def admin_main():
                         return True
         return False
 
-
     name = request.args.get('name')
+    name1 = request.args.get('name1')
     field = request.args.get('field')
     data = request.args.get('data')
     login = request.args.get('login')
@@ -122,6 +122,9 @@ def admin_main():
     text = request.args.get('tentacles1')
     id_f = request.args.get('id_file')
     map_id = request.args.get('map')
+    map_id_1 = request.args.get('map1')
+    field_id = request.args.get('field_id')
+    login_user = request.args.get('login_user')
 
     if not login:
         return redirect('/')
@@ -221,9 +224,23 @@ def admin_main():
         number = request.args.get('tentacles')
         add_user_to_field(name, field, number)
         return redirect(url_for('admin_main', login=login))
-    if map_id:
-        map_id = request.args.get('map')
-        delete_map(map_id)
+    if name1 and field:
+        name1 = request.args.get('name1')
+        field = request.args.get('field')
+        number = request.args.get('tentacles')
+        add_user_to_field_2(name1, field, number)
+        return redirect(url_for('admin_main', login=login))
+    if map_id_1:
+        map_id_1 = request.args.get('map1')
+        print(map_id_1, 'Я ТУТ')
+        delete_map(map_id_1)
+        return redirect(url_for('admin_main', login=login))
+    if field_id and login:
+        field_id = request.args.get('field_id')
+        print(field_id, 1232136126312312131232131)
+        login_user = request.args.get('login_user')
+        login = request.args.get('login')
+        delete_user_from_field(login_user, field_id)
         return redirect(url_for('admin_main', login=login))
     else:
         map_lst = get_fields()
@@ -248,7 +265,9 @@ def admin_main():
             if i[1] != login:
                 users_list.remove(i)
         print(map_lst)
-        return render_template('admin_main.html', style=url_for('static', filename='css/css_for_reg.css'), login=login, data=map_lst, popitki=popitki, users=users_list)
+
+        return render_template('admin_main.html', style=url_for('static', filename='css/css_for_reg.css'), login=login,
+                               data=map_lst, popitki=popitki, users=users_list)
 
 
 @app.route('/admin/add_users', methods=['GET', 'POST'])
@@ -282,6 +301,19 @@ def redactor():
         return render_template('redact_field.html', gifts=gift_lst, data=karta, red=not_to_red, f_name=map_lst[3], id_f=map_lst[0], login=login, size=len(karta))
 
 
+@app.route('/admin/del_prize', methods=['GET'])
+def del_prize_al():
+    login = request.args.get('login')
+    if not login:
+        return redirect('/')
+    else:
+        symb = request.args.get('deleterer')
+        b = delete_prize(symb)
+        print(b, symb)
+        a = get_prizes()
+        return render_template('prizes_view_admin.html', login=login, data=a, filter='')
+
+
 @app.route('/admin/create_field', methods=['GET'])
 def index():
     login = request.args.get('login')
@@ -307,6 +339,10 @@ def prize():
         file = request.files['icon']
         about = request.form['about']
         print(5, file)
+        if smb in ('-', '#'):
+            flash('Нельзя обозначать призы символами «#» и «-»')
+            return render_template('prize_create.html', login=login)
+
         if file.filename.split('.')[-1] not in files:
             flash('Недопустимый формат файла')
             return render_template('prize_create.html', login=login)
@@ -325,6 +361,54 @@ def prize():
             return render_template('prize_create.html', login=login)
 
 
+@app.route('/admin/redact', methods=['GET', 'POST'])
+def changer():
+    login = request.args.get('login')
+    if not login:
+        return redirect('/')
+    else:
+        print(1)
+        if request.method == 'GET':
+            symb = request.args.get('qup')
+            if symb:
+                inf_prize = get_prize_by_smb(symb)
+                id_f = inf_prize[0]
+                name = inf_prize[1]
+                symb = inf_prize[2]
+                desc = inf_prize[3]
+            else:
+                name = ''
+                desc = ''
+            return render_template('prize_create.html', login=login, name=name, symb=symb, desc=desc, id_f=id_f)
+        name = request.form['name']
+        smb = request.form['symbol']
+        file = request.files['icon']
+        about = request.form['about']
+        id_f = int(request.form['rrp'])
+
+        if smb in ('-', '#'):
+            flash('Нельзя обозначать призы символами «#» и «-»')
+            return render_template('prize_create.html', login=login, name=name, symb=smb, desc=about, id_f=id_f)
+
+        print(5, file)
+        if file.filename.split('.')[-1] not in files:
+            flash('Недопустимый формат файла')
+            return render_template('prize_create.html', login=login, name=name, symb=smb, desc=about, id_f=id_f)
+        sql_ret = redact_prize(id_f, name, smb, about)
+        print(sql_ret, 1)
+        if not sql_ret:
+            file.save(f'.\\static\\media\\{smb}.{file.filename.split(".")[-1]}')
+            # "C:\Users\peter\AppData\Roaming"
+            return redirect(url_for('admin_main', login=login))
+        else:
+            if sql_ret.strip() == 'prizes.symbol':
+                txt = 'Символ'
+            else:
+                txt = 'Имя'
+            flash(f'{txt} уже существует')
+            return render_template('prize_create.html', login=login, name=name, symb=smb, desc=about, id_f=id_f)
+
+
 @app.route('/admin/prizes_view', methods=['GET', 'POST'])
 def prizes_view_admin():
     login = request.args.get('login')
@@ -333,7 +417,12 @@ def prizes_view_admin():
     if not login:
         return redirect('/')
     else:
-        return render_template('prizes_view_admin.html', login=login, data=a)
+        if request.method == 'GET':
+            return render_template('prizes_view_admin.html', login=login, data=a, filter='')
+        else:
+            fil = request.form['filter']
+            print(fil)
+            return render_template('prizes_view_admin.html', login=login, data=a, filter=fil)
 
 
 @app.route('/admin/create_field', methods=['POST'])

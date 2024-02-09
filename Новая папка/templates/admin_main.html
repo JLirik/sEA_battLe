@@ -7,10 +7,14 @@
     <meta charset="UTF-8">
     <title>Страница админа</title>
         <link rel="stylesheet" type="text/css" href="../static/css/css_for_reg.css">
-		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Varela Round">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Varela Round">
 </head>
 <body>
-    <h1>Добро пожаловать на страницу админа, {{ users[0][4]}}</h1>
+    {% for i in users %}
+        {% if login == i[1]%}
+            <h1>Добро пожаловать на страницу админа, {{ i[4] }}</h1>
+        {%endif%}
+    {%endfor%}
     <div class="center-r">
         <form action="/admin/create_field" method="get">
             <input type="hidden" name="login" id="log" value="{{ login }}" />
@@ -20,7 +24,7 @@
             <input type="hidden" name="login" id="log" value="{{ login }}" />
             <button class="button1" style="width:135px;height:45px;cursor:pointer">Создать приз</button>
         </form>
-        	<form action="/admin/prizes_view" method="get">
+          <form action="/admin/prizes_view" method="get">
             <input type="hidden" name="login" id="log" value="{{ login }}" />
             <button class="button1" style="width:200px;height:45px;cursor:pointer">Посмотреть призы</button>
         </form>
@@ -33,7 +37,7 @@
 
     {% for i in data %}
 
-    <div style="display: flex; justify-content: space-between; border-bottom: 1px solid black;">
+    <div style="display: flex; justify-content: space-between;">
         <div>
             <div>
                 <h2>{{ i[3] }}</h2>
@@ -44,17 +48,22 @@
                 {%endif%}
             {%endfor%}
         </div>
-        <div style="display: flex; align-items: flex-end; margin: 0px;">
+        <br>
+    </div>
+        <div style="display: flex; align-items: flex-end; border-bottom: 1px solid black; padding-bottom:5px; margin: 0px;">
             <form action="/admin/add_users" method="get">
                 <input name="login" type="hidden" value="{{ login }}" />
-                <button name="map" type="submit" value="{{ i[3] }}" class="button1" style="width:135px;height:45px;">Добавить пользователч</button>
+                <button name="map" type="submit" value="{{ i[3] }}" class="button1" style="width:250px;height:45px; margin:5 px;">Настройка игроков</button>
+            </form>
+            <form action="/admin/main" method="get">
+                <input name="login" type="hidden" value="{{ login }}" />
+                <button name="map1" type="submit" value="{{ i[0] }}" class="button1" style="width:135px;height:45px;">Удаление</button>
             </form>
             <form action="/admin/redact_field" method="get">
                 <input name="login" type="hidden" value="{{ login }}" />
                 <button name="map" type="submit" value="{{ i[0] }}" class="button1" style="width:135px;height:45px;">Редактировать</button>
             </form>
         </div>
-    </div>
 
     {% endfor %}
 </div>

@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <title>Страница добавления пользователей</title>
         <link rel="stylesheet" type="text/css" href="../static/css/css_for_reg.css">
-		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Varela Round">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Varela Round">
 <style>
     .button.clicked {
     background-color: blue;
@@ -29,6 +29,31 @@
                             <input type="hidden" name="field" value="{{ j[0] }}" />
                             <button name="login" type="submit" value="{{ login }}" class="button1" style="width:135px;height:60px;">Добавить на карту</button>
                              <input type="number" id="tentacles" placeholder="Введите количество выстрелов" name="tentacles" min="1" style="width:500px;height:30px;" />
+                        </form>
+                </div>
+                {%endif%}
+            {%endif%}
+        {% endfor %}
+    {% endfor %}
+
+
+    {% for i in data %}
+        {% for j in maps %}
+            {% if name in j%}
+                {% if i[6] == 0 and i[1]  in j[2] %}
+                <div class="box-1">
+                    <h5>Имя пользователя - {{ i[4] }} (уже есть на карте)</h5>
+                    <h5>Логин пользователя - {{ i[1] }}</h5>
+                        <form action="/admin/main" method="get">
+                             <input type="hidden" name="field_id" value="{{ j[0] }}" />
+                            <input type="hidden" name="login_user" value="{{ i[1] }}" />
+                            <button name="login" type="submit" value="{{ login }}" class="button1" style="width:135px;height:60px;">Удалить пользователя</button>
+                        </form>
+                        <form action="/admin/main" method="get">
+                             <input type="hidden" name="name1" value="{{ i[1] }}" />
+                            <input type="hidden" name="field" value="{{ j[0] }}" />
+                            <button name="login" type="submit" value="{{ login }}" class="button1" style="width:135px;height:60px;">Добавить выстрелов</button>
+                            <input type="number" id="tentacles" placeholder="Введите количество выстрелов, которое должно быть у игрока" name="tentacles" min="1" style="width:750px;height:30px;" />
                         </form>
                 </div>
                 {%endif%}

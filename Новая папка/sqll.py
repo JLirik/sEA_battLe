@@ -118,13 +118,29 @@ def add_user_to_field(login, field_id, shots):
     return True
 
 
+def add_user_to_field_2(login, field_id, shots):
+    con = sqlite3.connect('predprof.db')
+    cur = con.cursor()
+    users = cur.execute("""SELECT field_users FROM fields
+                               WHERE field_id=?""", (field_id,)).fetchone()[0]
+    a = json.loads(users)
+    a[login] = int(shots)
+    cur.execute("""UPDATE fields SET field_users = ? WHERE field_id=?
+                        """, (json.dumps(a), field_id,))
+    con.commit()
+    return True
+
+
 def redact_prize(pr_id, name, smb, about):
     con = sqlite3.connect('predprof.db')
     cur = con.cursor()
-    cur.execute("""UPDATE prizes SET name = ?, symbol = ?, about=? WHERE prize_id=?
-                                """, (name, smb, about, pr_id,))
-    con.commit()
-    return True
+    try:
+        cur.execute("""UPDATE prizes SET name = ?, symbol = ?, about=? WHERE prize_id=?
+                                    """, (name, smb, about, pr_id,))
+        con.commit()
+    except Exception as e:
+        return str(e)[26:]
+    return 0
 
 
 def get_prize_by_smb(smb):
@@ -152,6 +168,28 @@ def get_prize(smb):
     cur = con.cursor()
     pr = cur.execute("""SELECT * FROM prizes WHERE symbol=?""", (smb,)).fetchall()[0]
     return pr
+
+
+def delete_prize(smb):
+    con = sqlite3.connect('predprof.db')
+    cur = con.cursor()
+    cur.execute("""DELETE FROM prizes WHERE symbol=?""", (smb,))
+    con.commit()
+    users = get_users()
+    for user in users:
+        a = user[5]
+        c = a.count(smb)
+        if c:
+            print(a)
+            a = a.split(', ')
+            login = user[1]
+            for _ in range(c):
+                a.remove(smb)
+                print(a)
+            cur.execute("""UPDATE users SET prizes = ? WHERE login=?
+                                                """, (', '.join(a), login,))
+            con.commit()
+    return True
 
 
 def get_user_prizes(login):
@@ -205,6 +243,7 @@ def delete_map(field_id):
     con = sqlite3.connect('predprof.db')
     cur = con.cursor()
     field = get_field(field_id)
+    print(field)
     if '#' in field[1]:
         return False
     cur.execute("""DELETE FROM fields WHERE field_id=? 
@@ -229,6 +268,31 @@ def delete_map(field_id):
     for i in a:
         cur.execute("""UPDATE users SET avaliable_fields = ? WHERE userid=?
                                     """, (i[7], i[0],))
+    con.commit()
+    return True
+
+
+def delete_user_from_field(login, field_id):
+    con = sqlite3.connect('predprof.db')
+    cur = con.cursor()
+    print(login)
+    print(field_id)
+    fields = cur.execute("""SELECT avaliable_fields FROM users WHERE login=?""", (login,)).fetchone()
+    res = []
+    print(fields)
+    # for el in fields.split(', '):
+    #     if el != str(field_id):
+    #         res.append(el)
+    print(res)
+    cur.execute("""UPDATE users SET avaliable_fields = ? WHERE login=? """, (', '.join(res), login,))
+    con.commit()
+    users = cur.execute("""SELECT field_users FROM fields WHERE field_id=?""", (field_id,)).fetchone()[0]
+    a = json.loads(users)
+    res = {}
+    for el in a:
+        if el != login:
+            res[el] = a[el]
+    cur.execute("""UPDATE fields SET field_users = ? WHERE field_id=?""", (json.dumps(res), field_id,))
     con.commit()
     return True
 
