@@ -163,6 +163,17 @@ def get_user_fields(user):
     return ret
 
 
+def redact_fields(field_id, field_info, name):
+    con = sqlite3.connect('predprof.db')
+    cur = con.cursor()
+    field = get_field(field_id)
+    if '#' in field[1]:
+        return False
+    cur.execute("""UPDATE fields SET name = ?, field_info = ? WHERE field_id=? """, (name, field_info, field_id,))
+    con.commit()
+    return True
+
+
 def save_map_ch(field_id, new_map, new_users):
     con = sqlite3.connect('predprof.db')
     cur = con.cursor()
