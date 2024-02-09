@@ -145,7 +145,7 @@ def admin_main():
                 if '#' in map_lst[1]:
                     not_to_red = True
                 return render_template('redact_field.html', data=karta, red=not_to_red, f_name=map_lst[3],
-                                       id_f=map_lst[0], login=login, size=len(karta))
+                                       id_f=map_lst[0], login=login, size=len(karta), gifts=gift_lst)
 
             return render_template('index.html', style=url_for('static', filename='css/css_for_reg.css'),
                                    gifts=gift_lst, size=size, login=login)
@@ -160,7 +160,7 @@ def admin_main():
                 if '#' in map_lst[1]:
                     not_to_red = True
                 return render_template('redact_field.html', data=karta, red=not_to_red, f_name=map_lst[3],
-                                       id_f=map_lst[0], login=login, size=len(karta))
+                                       id_f=map_lst[0], login=login, size=len(karta), gifts=gift_lst)
             return render_template('index.html', style=url_for('static', filename='css/css_for_reg.css'),
                                    gifts=gift_lst, size=size, login=login)
 
@@ -179,7 +179,7 @@ def admin_main():
                         if '#' in map_lst[1]:
                             not_to_red = True
                         return render_template('redact_field.html', data=karta, red=not_to_red, f_name=map_lst[3],
-                                               id_f=map_lst[0], login=login, size=len(karta))
+                                               id_f=map_lst[0], login=login, size=len(karta), gifts=gift_lst)
                     return render_template('index.html', style=url_for('static', filename='css/css_for_reg.css'),
                                            gifts=gift_lst, size=size, login=login)
             if id_f:
@@ -199,7 +199,7 @@ def admin_main():
                     if '#' in map_lst[1]:
                         not_to_red = True
                     return render_template('redact_field.html', data=karta, red=not_to_red, f_name=map_lst[3],
-                                           id_f=map_lst[0], login=login, size=len(karta))
+                                           id_f=map_lst[0], login=login, size=len(karta), gifts=gift_lst)
             else:
                 post_game(data, text)
             return redirect(url_for('admin_main', login=login))
@@ -213,7 +213,7 @@ def admin_main():
             if '#' in map_lst[1]:
                 not_to_red = True
             return render_template('redact_field.html', data=karta, red=not_to_red, f_name=map_lst[3],
-                                   id_f=map_lst[0], login=login, size=len(karta))
+                                   id_f=map_lst[0], login=login, size=len(karta), gifts=gift_lst)
         return render_template('index.html', style=url_for('static', filename='css/css_for_reg.css'), gifts=gift_lst, size=size, login=login)
     if name and field:
         name = request.args.get('name')
