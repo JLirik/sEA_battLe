@@ -118,6 +118,21 @@ def add_user_to_field(login, field_id, shots):
     return True
 
 
+def redact_prize(pr_id, name, smb, about):
+    con = sqlite3.connect('predprof.db')
+    cur = con.cursor()
+    cur.execute("""UPDATE prizes SET name = ?, symbol = ?, about=? WHERE prize_id=?
+                                """, (name, smb, about, pr_id,))
+    con.commit()
+    return True
+
+
+def get_prize_by_smb(smb):
+    con = sqlite3.connect('predprof.db')
+    cur = con.cursor()
+    prz = cur.execute("""SELECT * FROM prizes WHERE symbol = ?""", (smb,)).fetchall()[0]
+    return prz
+
 def get_fields():
     con = sqlite3.connect('predprof.db')
     cur = con.cursor()
