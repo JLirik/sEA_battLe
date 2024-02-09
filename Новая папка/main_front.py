@@ -121,6 +121,7 @@ def admin_main():
     number = request.args.get('tentacles')
     text = request.args.get('tentacles1')
     id_f = request.args.get('id_file')
+    map_id = request.args.get('map')
 
     if not login:
         return redirect('/')
@@ -219,6 +220,10 @@ def admin_main():
         field = request.args.get('field')
         number = request.args.get('tentacles')
         add_user_to_field(name, field, number)
+        return redirect(url_for('admin_main', login=login))
+    if map_id:
+        map_id = request.args.get('map')
+        delete_map(map_id)
         return redirect(url_for('admin_main', login=login))
     else:
         map_lst = get_fields()
