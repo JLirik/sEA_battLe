@@ -116,7 +116,18 @@ def add_user_to_field(login, field_id, shots):
                         """, (json.dumps(a), field_id,))
     con.commit()
     return True
-
+    
+def add_user_to_field_2(login, field_id, shots):
+    con = sqlite3.connect('predprof.db')
+    cur = con.cursor()
+    users = cur.execute("""SELECT field_users FROM fields
+                               WHERE field_id=?""", (field_id,)).fetchone()[0]
+    a = json.loads(users)
+    a[login] = int(shots)
+    cur.execute("""UPDATE fields SET field_users = ? WHERE field_id=?
+                        """, (json.dumps(a), field_id,))
+    con.commit()
+    return True
 
 def redact_prize(pr_id, name, smb, about):
     con = sqlite3.connect('predprof.db')
@@ -229,6 +240,30 @@ def delete_map(field_id):
     for i in a:
         cur.execute("""UPDATE users SET avaliable_fields = ? WHERE userid=?
                                     """, (i[7], i[0],))
+    con.commit()
+    return True
+
+def delete_user_from_field(login, field_id):
+    con = sqlite3.connect('predprof.db')
+    cur = con.cursor()
+    print(login)
+    print(field_id)
+    fields = cur.execute("""SELECT avaliable_fields FROM users WHERE login=?""", (login,)).fetchone()
+    res = []
+    print(fields)
+    # for el in fields.split(', '):
+    #     if el != str(field_id):
+    #         res.append(el)
+    print(res)
+    cur.execute("""UPDATE users SET avaliable_fields = ? WHERE login=? """, (', '.join(res), login,))
+    con.commit()
+    users = cur.execute("""SELECT field_users FROM fields WHERE field_id=?""", (field_id,)).fetchone()[0]
+    a = json.loads(users)
+    res = {}
+    for el in a:
+        if el != login:
+            res[el] = a[el]
+    cur.execute("""UPDATE fields SET field_users = ? WHERE field_id=?""", (json.dumps(res), field_id,))
     con.commit()
     return True
 
