@@ -115,6 +115,7 @@ def admin_main():
 
 
     name = request.args.get('name')
+    name1 = request.args.get('name1')
     field = request.args.get('field')
     data = request.args.get('data')
     login = request.args.get('login')
@@ -122,6 +123,9 @@ def admin_main():
     text = request.args.get('tentacles1')
     id_f = request.args.get('id_file')
     map_id = request.args.get('map')
+    map_id_1 = request.args.get('map1')
+    field_id = request.args.get('field_id')
+    login_user = request.args.get('login_user')
 
     if not login:
         return redirect('/')
@@ -221,9 +225,22 @@ def admin_main():
         number = request.args.get('tentacles')
         add_user_to_field(name, field, number)
         return redirect(url_for('admin_main', login=login))
-    if map_id:
-        map_id = request.args.get('map')
-        delete_map(map_id)
+    if name1 and field:
+        name1 = request.args.get('name1')
+        field = request.args.get('field')
+        number = request.args.get('tentacles')
+        add_user_to_field_2(name1, field, number)
+        return redirect(url_for('admin_main', login=login))
+    if map_id_1:
+        map_id_1 = request.args.get('map1')
+        delete_map(map_id_1)
+        return redirect(url_for('admin_main', login=login))
+    if field_id and login:
+        field_id = request.args.get('field_id')
+        print(field_id, 1232136126312312131232131)
+        login_user = request.args.get('login_user')
+        login = request.args.get('login')
+        delete_user_from_field(login_user, field_id)
         return redirect(url_for('admin_main', login=login))
     else:
         map_lst = get_fields()
