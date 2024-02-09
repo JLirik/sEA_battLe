@@ -40,9 +40,13 @@
         {% if not gifts: %}
             <h5>Пока что вы не добавили призы. Вернитесь назад и создайте их.</h5>
         {% else: %}
-            {% for e in gifts %}
-                <h3>{{ e[2] }} - {{ e[1] }}: {{ e[3] }}</h3>
+            <h3>Призы:</h3>
+            <div style="border: 4px solid red; margin-bottom: 15px;">
+                {% for e in gifts %}
+                <h4>{{ e[2] }} - {{ e[1] }}: {{ e[3] }}</h4>
             {% endfor %}
+            </div>
+
         {% endif %}
 
     <form method="post" action="/game/{{ size }}">
@@ -63,9 +67,11 @@
         <br>
     </form>
     <div class="center-r">
+
         <form action="/admin/main" method="get" >
             <input type="hidden" name="login" id="log" value="{{ login }}" />
             <input type="hidden" name="data" id="log1" />
+            <input type="text" id="tentacles1" placeholder="Введите название поля" name="tentacles1" style="width:135;height:30px;" />
             <button id="save" class="button1 saver" type="submit" style="width:135px;height:45px;cursor:pointer">Сохранить</button>
         </form>
     </div>
