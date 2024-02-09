@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Поле</title>
+        <link rel="stylesheet" type="text/css" href="../static/css/css_for_reg.css">
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Varela Round">
+    <meta charset="utf8">
+    <style>
+        .button {
+            width: 50px;
+            height: 50px;
+            background-color: white;
+            border: 1px solid black;
+            border-radius: 5px;
+        }
+
+        .button.clicked {
+            background-color: blue;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+</head>
+
+{% with messages = get_flashed_messages() %}
+		 {% if messages %}
+		  <ul class="ul_cl">
+		  {% for message in messages %}
+			<li>{{ message }}</li>
+		  {% endfor %}
+		  </ul>
+		 {% endif %}
+		{% endwith %}
+<body>
+    <h1>Редактируйте поле</h1>
+    <div class="box-1">
+
+        <h5>Чтобы расставить корабли, нужно выбрать соответсвующую ячейку на поле ниже и вместо символа <b>«-»</b> поставить букву, обозначающую приз.<br>Чтобы убрать корабль, просто удалите название приза из выбранной вами клетки.</h5>
+
+        {% if not gifts: %}
+            <h5>Пока что вы не добавили призы. Вернитесь назад и создайте их.</h5>
+        {% else: %}
+            <h3>Призы:</h3>
+            <div style="border: 4px solid red; margin-bottom: 15px">
+                {% for e in gifts %}
+                <h4>{{ e[2] }} - {{ e[1] }}: {{ e[3] }}</h4>
+            {% endfor %}
+            </div>
+
+        {% endif %}
+
+
+        <input type="hidden" name="login" id="log" value="{{ login }}" />
+        {% if red: %}
+            <h3>Поле нельзя редактировать. Пользователь уже совершил выстрел.</h3>
+            <form method="post" action="/game/{{ size }}">
+                <div style="display:grid; align-items: center;">
+                    {% for i in range(size) %}
+                        <div style="display: flex;">
+                            {% for j in range(size) %}
+                            <div class="total">
+                                {% if data[i][j] == '#': %}
+                                    <input class="input-text" type="text" id="name" placeholder="-" style="height: 50px; width: 50px; border: 1px solid black; text-align: center; font-size: 30px; color: red;" readonly maxlength="1" value="#">
+                                {% elif data[i][j] == '-': %}
+                                    <input class="input-text" type="text" id="name" placeholder="-" style="height: 50px; width: 50px; border: 1px solid black; text-align: center; font-size: 30px;" readonly maxlength="1">
+                                {% else: %}
+                                    <input class="input-text" type="text" id="name" placeholder="-" style="height: 50px; width: 50px; border: 1px solid black; text-align: center; font-size: 30px;" readonly maxlength="1" value="{{ data[i][j] }}">
+                                {% endif %}
+                            </div>
+
+        <!--                        <button class="button" value="{{ i }}-{{ j }}" type="button"></button>-->
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+                </div>
+                <br>
+            </form>
+
+        {% else: %}
+            <form method="post" action="/game/{{ size }}">
+                <div style="display:grid; align-items: center;">
+                    {% for i in range(size) %}
+                        <div style="display: flex;">
+                            {% for j in range(size) %}
+                                <div class="total">
+                                    {% if data[i][j] == '-': %}
+                                        <input class="input-text" type="text" id="name" placeholder="-" style="height: 50px; width: 50px; border: 1px solid black; text-align: center; font-size: 30px;" maxlength="1">
+                                    {% else: %}
+                                        <input class="input-text" type="text" id="name" placeholder="-" style="height: 50px; width: 50px; border: 1px solid black; text-align: center; font-size: 30px;" maxlength="1" value="{{ data[i][j] }}">
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+                </div>
+                <br>
+            </form>
+        {% endif %}
+
+    <div class="center-r">
+        <form action="/admin/main" method="get" >
+            <input type="hidden" name="login" id="log" value="{{ login }}" />
+            <input type="hidden" name="id_file" id="log" value="{{ id_f }}" />
+            <input type="hidden" name="data" id="log1" />
+            {% if red: %}
+                <input type="text" id="tentacles1" placeholder="Введите название поля" value="{{ f_name }}" readonly name="tentacles1" style="width:135;height:30px;" />
+            {% else: %}
+                <input type="text" id="tentacles1" placeholder="Введите название поля" value="{{ f_name }}" name="tentacles1" style="width:135;height:30px;" />
+            {% endif %}
+            <button id="save" class="button1 saver" type="submit" style="width:135px;height:45px;cursor:pointer">Сохранить</button>
+        </form>
+    </div>
+    </div>
+<script src="{{url_for('static', filename='script1.js')}}"></script>
+</body>
+</html>
