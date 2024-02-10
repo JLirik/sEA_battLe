@@ -269,7 +269,7 @@ def admin_main():
                 users_list.remove(i)
 
         return render_template('admin_main.html', style=url_for('static', filename='css/css_for_reg.css'), login=login,
-                               data=map_lst, popitki=popitki, users=users_list)
+                               data=map_lst, popitki=popitki, users=users_list, ln=len(map_lst))
 
 
 @app.route('/admin/add_users', methods=['GET', 'POST'])
