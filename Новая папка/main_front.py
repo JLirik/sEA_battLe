@@ -12,9 +12,11 @@ app.config['SECRET_KEY'] = 'predpof_code_crusaders'
 init_database()
 files = ['jpg', 'png', 'jpeg']
 
+
 class SizeForm(FlaskForm):
     size = IntegerField('Размер', validators=[DataRequired()])
     submit = SubmitField('Создать')
+
 
 @app.route('/', methods=['GET'])
 def first():
@@ -55,12 +57,12 @@ def reg_post():
 
 
 @app.route('/log_in', methods=['GET'])
-def login():
+def lo_in():
     return render_template('log_in.html')
 
 
 @app.route('/log_in', methods=['POST'])
-def login_post():
+def log_in_post():
     user, passw = request.form['login'], request.form['password']
     sql_ret = log_in(user, passw)
     if sql_ret:
@@ -126,7 +128,8 @@ def admin_main():
     field_id = request.args.get('field_id')
     login_user = request.args.get('login_user')
 
-    if not login:
+    chk = check_user(login)
+    if chk != 1:
         return redirect('/')
     if data:
         data = request.args.get('data').replace(' ', '-')
@@ -276,10 +279,10 @@ def admin_main():
 def add_users():
     login = request.args.get('login')
     a = request.args.get('map')
-    print(a)
     users_list = get_users()
     map_lst = get_fields()
-    if not login:
+    chk = check_user(login)
+    if chk != 1:
         return redirect('/')
     else:
         return render_template('add_users.html', data=users_list, maps=map_lst, name=a, login=login)
@@ -297,7 +300,8 @@ def redactor():
     if '#' in map_lst[1]:
         not_to_red = True
 
-    if not login:
+    chk = check_user(login)
+    if chk != 1:
         return redirect('/')
     else:
         return render_template('redact_field.html', gifts=gift_lst, data=karta, red=not_to_red, f_name=map_lst[3], id_f=map_lst[0], login=login, size=len(karta))
@@ -306,7 +310,8 @@ def redactor():
 @app.route('/admin/del_prize', methods=['GET'])
 def del_prize_al():
     login = request.args.get('login')
-    if not login:
+    chk = check_user(login)
+    if chk != 1:
         return redirect('/')
     else:
         symb = request.args.get('deleterer')
@@ -319,7 +324,8 @@ def del_prize_al():
 def index():
     login = request.args.get('login')
     form = SizeForm()
-    if not login:
+    chk = check_user(login)
+    if chk != 1:
         return redirect('/')
     else:
         return render_template('home.html', form=form, login=login)
@@ -328,7 +334,8 @@ def index():
 @app.route('/admin/prize_corner', methods=['GET', 'POST'])
 def prize():
     login = request.args.get('login')
-    if not login:
+    chk = check_user(login)
+    if chk != 1:
         return redirect('/')
     else:
         if request.method == 'GET':
@@ -361,7 +368,8 @@ def prize():
 @app.route('/admin/redact', methods=['GET', 'POST'])
 def changer():
     login = request.args.get('login')
-    if not login:
+    chk = check_user(login)
+    if chk != 1:
         return redirect('/')
     else:
         if request.method == 'GET':
@@ -407,7 +415,8 @@ def changer():
 def prizes_view_admin():
     login = request.args.get('login')
     a = get_prizes()
-    if not login:
+    chk = check_user(login)
+    if chk != 1:
         return redirect('/')
     else:
         if request.method == 'GET':
@@ -421,21 +430,15 @@ def prizes_view_admin():
 def get_index():
     form = SizeForm()
     login = request.args.get('login')
-
+    chk = check_user(login)
+    if chk != 1:
+        return redirect('/')
     if form.validate_on_submit():
         size = form.size.data
         if not (2 <= size <= 15):
             flash('Размер поля должен быть от 2 до 15 клеток!')
             return render_template('home.html', form=form, login=login)
         return redirect(url_for('game', size=size, login=login))
-
-
-# @app.route('/game/<int:size>', methods=['GET'])
-# def game(size):
-#     login = request.args.get('login')
-#     if not login:
-#         return redirect('/')
-#     return render_template('index.html',  style=url_for('static', filename='css/css_for_reg.css'), size=size)
 
 
 @app.route('/game/<int:size>', methods=['POST', 'GET'])
@@ -450,7 +453,8 @@ def game(size):
 @app.route('/user/maps', methods=['GET'])
 def usr_maps():
     login = request.args.get('login')
-    if not login:
+    chk = check_user(login)
+    if chk != 0:
         return redirect('/')
     maps_lst = get_user_fields(login)  # Потом будет получать из БД.
     users_list = get_users()
@@ -471,6 +475,9 @@ def usr_maps():
 def get_usr_maps():
     map_id = request.form['map']
     login = request.form['login']
+    chk = check_user(login)
+    if chk != 0:
+        return redirect('/')
     map_lst = get_fields()
     return redirect(url_for('usr_playground', login=login, map_id=map_id))
 
@@ -483,7 +490,8 @@ def usr_playground():
         data = request.args.get('data')
     except Exception as e:
         data = ''
-    if not logn:
+    chk = check_user(logn)
+    if chk != 0:
         return redirect('/')
     if not data:
         local_map = get_field(map_id)
@@ -553,11 +561,12 @@ def prizes_view_user():
     login = request.args.get('login')
     prizes = request.args.get('prizes')
     a = get_prizes()
-    if not login:
+    chk = check_user(login)
+    if chk != 0:
         return redirect('/')
     else:
         return render_template('prizes_view_user.html', login=login, prizes=prizes, data=a)
 
 
 if __name__ == '__main__':
-    app.run(port=1024, host='127.0.0.1')
+    app.run(port=1025, host='127.0.0.1')
