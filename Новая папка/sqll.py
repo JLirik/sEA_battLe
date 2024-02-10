@@ -180,12 +180,10 @@ def delete_prize(smb):
         a = user[5]
         c = a.count(smb)
         if c:
-            print(a)
             a = a.split(', ')
             login = user[1]
             for _ in range(c):
                 a.remove(smb)
-                print(a)
             cur.execute("""UPDATE users SET prizes = ? WHERE login=?
                                                 """, (', '.join(a), login,))
             con.commit()
@@ -243,7 +241,6 @@ def delete_map(field_id):
     con = sqlite3.connect('predprof.db')
     cur = con.cursor()
     field = get_field(field_id)
-    print(field)
     if '#' in field[1]:
         return False
     cur.execute("""DELETE FROM fields WHERE field_id=? 
@@ -275,15 +272,11 @@ def delete_map(field_id):
 def delete_user_from_field(login, field_id):
     con = sqlite3.connect('predprof.db')
     cur = con.cursor()
-    print(login)
-    print(field_id)
     fields = cur.execute("""SELECT avaliable_fields FROM users WHERE login=?""", (login,)).fetchone()
     res = []
-    print(fields)
-    # for el in fields.split(', '):
-    #     if el != str(field_id):
-    #         res.append(el)
-    print(res)
+    for el in fields.split(', '):
+        if el != str(field_id):
+            res.append(el)
     cur.execute("""UPDATE users SET avaliable_fields = ? WHERE login=? """, (', '.join(res), login,))
     con.commit()
     users = cur.execute("""SELECT field_users FROM fields WHERE field_id=?""", (field_id,)).fetchone()[0]
@@ -297,6 +290,18 @@ def delete_user_from_field(login, field_id):
     return True
 
 
+def check_user(login):
+    con = sqlite3.connect('predprof.db')
+    cur = con.cursor()
+    try:
+        is_admin = cur.execute("""SELECT is_admin FROM users WHERE login=?
+                                        """, (login,)).fetchone()[0]
+        con.commit()
+    except Exception:
+        return -1
+    return is_admin
+
+
 def get_users():
     con = sqlite3.connect('predprof.db')
     cur = con.cursor()
@@ -304,6 +309,3 @@ def get_users():
     return users
 
 
-# add_user_to_field('89685433354', 1, 105)
-# add_field('----k---', {1: 'govna', 2: 'bullshit'}, 'suka')
-# /user/maps?login=SeliverstovDm.
