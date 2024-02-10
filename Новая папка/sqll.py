@@ -272,7 +272,7 @@ def delete_map(field_id):
 def delete_user_from_field(login, field_id):
     con = sqlite3.connect('predprof.db')
     cur = con.cursor()
-    fields = cur.execute("""SELECT avaliable_fields FROM users WHERE login=?""", (login,)).fetchone()
+    fields = cur.execute("""SELECT avaliable_fields FROM users WHERE login=?""", (login,)).fetchone()[0]
     res = []
     for el in fields.split(', '):
         if el != str(field_id):
