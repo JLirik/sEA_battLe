@@ -169,7 +169,6 @@ def admin_main():
 
         if data.count('-') != len(data):
             are_gifts = [e[2] for e in get_prizes()]
-            print(are_gifts)
 
             for e in data:
                 if e not in are_gifts and e not in ('-', '#'):
@@ -191,7 +190,6 @@ def admin_main():
                 for i in range(0, len(data), tmp):
                     a += data[i:i + tmp] + '\n'
                 par = redact_fields(id_f, a.strip(), text)
-                print(str(par))
                 if not par:
                     flash('Карта с таким названием уже сущетсвует!')
                     flash('Дайте карте уникальное имя.')
@@ -228,16 +226,21 @@ def admin_main():
         name1 = request.args.get('name1')
         field = request.args.get('field')
         number = request.args.get('tentacles')
-        add_user_to_field_2(name1, field, number)
-        return redirect(url_for('admin_main', login=login))
+        if number:
+            add_user_to_field_2(name1, field, number)
+            return redirect(url_for('admin_main', login=login))
+        else:
+            users_list = get_users()
+            map_lst = get_fields()
+            b = request.args.get('b')
+            flash('Нужно ввести количество выстрелов, которое хотите добавить пользователю.')
+            return render_template('add_users.html', data=users_list, maps=map_lst, name=b, login=login)
     if map_id_1:
         map_id_1 = request.args.get('map1')
-        print(map_id_1, 'Я ТУТ')
         delete_map(map_id_1)
         return redirect(url_for('admin_main', login=login))
     if field_id and login:
         field_id = request.args.get('field_id')
-        print(field_id, 1232136126312312131232131)
         login_user = request.args.get('login_user')
         login = request.args.get('login')
         delete_user_from_field(login_user, field_id)
@@ -264,7 +267,6 @@ def admin_main():
         for i in users_list:
             if i[1] != login:
                 users_list.remove(i)
-        print(map_lst)
 
         return render_template('admin_main.html', style=url_for('static', filename='css/css_for_reg.css'), login=login,
                                data=map_lst, popitki=popitki, users=users_list)
@@ -274,6 +276,7 @@ def admin_main():
 def add_users():
     login = request.args.get('login')
     a = request.args.get('map')
+    print(a)
     users_list = get_users()
     map_lst = get_fields()
     if not login:
@@ -287,7 +290,6 @@ def redactor():
     login = request.args.get('login')
     a = request.args.get('map')
     map_lst = get_field(a)
-    print(map_lst, a)
     karta = map_lst[1].split('\n')
     gift_lst = get_prizes()
 
@@ -309,7 +311,6 @@ def del_prize_al():
     else:
         symb = request.args.get('deleterer')
         b = delete_prize(symb)
-        print(b, symb)
         a = get_prizes()
         return render_template('prizes_view_admin.html', login=login, data=a, filter='')
 
@@ -317,7 +318,6 @@ def del_prize_al():
 @app.route('/admin/create_field', methods=['GET'])
 def index():
     login = request.args.get('login')
-    print(login, 1)
     form = SizeForm()
     if not login:
         return redirect('/')
@@ -331,14 +331,12 @@ def prize():
     if not login:
         return redirect('/')
     else:
-        print(1)
         if request.method == 'GET':
             return render_template('prize_create.html', login=login)
         name = request.form['name']
         smb = request.form['symbol']
         file = request.files['icon']
         about = request.form['about']
-        print(5, file)
         if smb in ('-', '#'):
             flash('Нельзя обозначать призы символами «#» и «-»')
             return render_template('prize_create.html', login=login)
@@ -347,7 +345,6 @@ def prize():
             flash('Недопустимый формат файла')
             return render_template('prize_create.html', login=login)
         sql_ret = add_prize(name, smb, about)
-        print(sql_ret, 1)
         if not sql_ret:
             file.save(f'.\\static\\media\\{smb}.{file.filename.split(".")[-1]}')
             # "C:\Users\peter\AppData\Roaming"
@@ -367,7 +364,6 @@ def changer():
     if not login:
         return redirect('/')
     else:
-        print(1)
         if request.method == 'GET':
             symb = request.args.get('qup')
             if symb:
@@ -390,12 +386,10 @@ def changer():
             flash('Нельзя обозначать призы символами «#» и «-»')
             return render_template('prize_create.html', login=login, name=name, symb=smb, desc=about, id_f=id_f)
 
-        print(5, file)
         if file.filename.split('.')[-1] not in files:
             flash('Недопустимый формат файла')
             return render_template('prize_create.html', login=login, name=name, symb=smb, desc=about, id_f=id_f)
         sql_ret = redact_prize(id_f, name, smb, about)
-        print(sql_ret, 1)
         if not sql_ret:
             file.save(f'.\\static\\media\\{smb}.{file.filename.split(".")[-1]}')
             # "C:\Users\peter\AppData\Roaming"
@@ -413,7 +407,6 @@ def changer():
 def prizes_view_admin():
     login = request.args.get('login')
     a = get_prizes()
-    print(a)
     if not login:
         return redirect('/')
     else:
@@ -421,7 +414,6 @@ def prizes_view_admin():
             return render_template('prizes_view_admin.html', login=login, data=a, filter='')
         else:
             fil = request.form['filter']
-            print(fil)
             return render_template('prizes_view_admin.html', login=login, data=a, filter=fil)
 
 
@@ -429,7 +421,6 @@ def prizes_view_admin():
 def get_index():
     form = SizeForm()
     login = request.args.get('login')
-    print(login, 2)
 
     if form.validate_on_submit():
         size = form.size.data
@@ -442,7 +433,6 @@ def get_index():
 # @app.route('/game/<int:size>', methods=['GET'])
 # def game(size):
 #     login = request.args.get('login')
-#     print(login, 2)
 #     if not login:
 #         return redirect('/')
 #     return render_template('index.html',  style=url_for('static', filename='css/css_for_reg.css'), size=size)
@@ -451,7 +441,6 @@ def get_index():
 @app.route('/game/<int:size>', methods=['POST', 'GET'])
 def game(size):
     login = request.args.get('login')
-    print(login, 123)
     if not login:
         return redirect('/')
     gift_lst = get_prizes()
@@ -466,14 +455,11 @@ def usr_maps():
     maps_lst = get_user_fields(login)  # Потом будет получать из БД.
     users_list = get_users()
     prizes = get_user_prizes(login)
-    print(prizes)
     a = prizes[0][0].split(', ')
-    print(a)
     q = []
     for i in a:
         if i != '':
             q.append(i)
-    print(q)
     for i in users_list:
         if i[1] != login:
             users_list.remove(i)
@@ -486,7 +472,6 @@ def get_usr_maps():
     map_id = request.form['map']
     login = request.form['login']
     map_lst = get_fields()
-    print(map_lst)
     return redirect(url_for('usr_playground', login=login, map_id=map_id))
 
 
@@ -506,7 +491,6 @@ def usr_playground():
         # Формат: Номер карты, Расстановка на поле, словарь с кол-вом выстрелов по логину, имя карты, словарь призов
         return render_template('user_playground.html', size=len(converted), shots=json.loads(local_map[2])[logn], map_id=map_id, login=logn, field=converted, style=url_for('static', filename='css/css_for_reg.css'))
     else:
-        print(data)
         if data.count('#') > json.loads(get_field(map_id)[2])[logn]:
             flash(f'У вас недостаточно снарядов для выстрела по выбранному количеству клеток')
             flash('(Нехватка боеприпасов 70%!!!)')
@@ -531,11 +515,9 @@ def usr_playground():
             for i in a.split("\n")[:-1]:
                 aa += i + "\n"
             new_map = aa.split('\n')[:-1]
-            # print(new_map)
 
             local_map = get_field(map_id)
             converted = local_map[1].split('\n')
-            # print(converted)
             f = 0
             counter = data.count('#')
             flash(f'Выстрелов вы совершили: {counter}')
@@ -551,9 +533,7 @@ def usr_playground():
                         pass
                     elif converted[y][x] not in ('#', '-') and new_map[y][x] == '#':
                         prize = get_prize(converted[y][x])
-                        # print(prize)
                         flash(f'Вы выиграли {prize[1]}')
-                        # print('Вы попали!')
                         won_prizes.append(prize[2])
                         f = 1
                         row = list(converted[y])
@@ -572,10 +552,7 @@ def usr_playground():
 def prizes_view_user():
     login = request.args.get('login')
     prizes = request.args.get('prizes')
-    print(1)
-    print(prizes)
     a = get_prizes()
-    print(a)
     if not login:
         return redirect('/')
     else:

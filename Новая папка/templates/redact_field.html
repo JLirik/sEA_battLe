@@ -53,6 +53,7 @@
         <input type="hidden" name="login" id="log" value="{{ login }}" />
         {% if red: %}
             <h3>Поле нельзя редактировать. Пользователь уже совершил выстрел.</h3>
+            <h3>Символ «#» обозначает поле, в которое уже стрелял пользователь.</h3>
             <form method="post" action="/game/{{ size }}">
                 <div style="display:grid; align-items: center;">
                     {% for i in range(size) %}
