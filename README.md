@@ -48,3 +48,4 @@
   ![image](https://github.com/JLirik/sEA_battLe/assets/118741123/ef7a020b-f67b-414b-96fa-8c56de8794c4)
 
 Это веб-приложение предоставляет удобный интерфейс для управления игровыми полями и выигрышем призов для пользователей.
+Ссылка на видео: https://www.youtube.com/watch?v=aQiQ3bEc7-E
